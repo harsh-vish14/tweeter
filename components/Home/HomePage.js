@@ -1,10 +1,13 @@
 import InputBox from "./input/input";
 import classes from "./home.module.scss";
-const HomePage = () => {
+import TweetFeed from "../tweetFeed/tweetFeed";
+const HomePage = ({ tweets }) => {
   return (
     <div className={classes.home}>
       <InputBox />
-      home
+      {tweets.map((tweet) => {
+        return <TweetFeed tweet={tweet} />;
+      })}
     </div>
   );
 };

@@ -1,0 +1,30 @@
+.tweet {
+  padding: 14px;
+  background-color: var(--input-background-color);
+  margin-top: 26px;
+  border-radius: 15px;
+  box-shadow: 0px 2px 4px 0px #0000000d;
+  .tweetImage {
+    margin: 10px;
+    img {
+      border-radius: 15px;
+    }
+  }
+  .tweetHeader {
+    display: flex;
+    margin-bottom: 15px;
+  }
+  .author {
+    margin-right: 30px;
+  }
+  .authorName {
+    font-weight: 900;
+  }
+  .dateAndTime {
+    font-size: 12px;
+    color: #bdbdbd;
+  }
+  .tweetMessage {
+    margin-left: 15px;
+  }
+}

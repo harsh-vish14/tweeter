@@ -12,7 +12,7 @@
     padding: 10px;
     outline: none;
     border: none;
-    width: 90%;
+    width: 100%;
     display: block;
     // max-width: 600px;
     resize: none;
@@ -39,4 +39,25 @@
     background: var(--title-bar-color);
     left: 0px;
   }
+}
+
+.inputFooter {
+  display: flex;
+  justify-content: space-between;
+}
+.footericon {
+  color: #2f80ed;
+  font-size: 20px;
+  cursor: pointer;
+}
+.tweetsBtn {
+  background: #2f80ed;
+  height: 32px;
+  width: 81px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  color: #fff;
 }

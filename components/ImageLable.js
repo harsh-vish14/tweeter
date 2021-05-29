@@ -6,7 +6,7 @@ const ImageLabel = ({ url }) => {
   }
   return (
     <div className={classes.imageLabel}>
-      <Image src={url} alt="Logo" height={50} width={50} />
+      <Image src={url} alt="Logo" height={50} width={50} layout="fixed" />
     </div>
   );
 };

@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import NavLink from "../layout/navabar/NavLink";
 import { FaCaretDown, FaSignOutAlt } from "react-icons/fa";
