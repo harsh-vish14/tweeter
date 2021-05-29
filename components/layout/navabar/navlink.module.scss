@@ -1,0 +1,30 @@
+.active {
+  color: #2f80ed;
+  position: relative;
+  &:after {
+    content: "";
+    position: absolute;
+    bottom: -28.5px;
+    background: #2f80ed;
+    height: 5px;
+    width: 120%;
+    border-radius: 10px 10px 0px 0px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+.profileActive {
+  color: #2f80ed;
+}
+.navlinks {
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+@media only screen and (max-width: 600px) {
+  .active {
+    &::after {
+      display: none;
+    }
+  }
+}
