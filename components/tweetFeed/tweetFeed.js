@@ -1,32 +1,29 @@
-import Image from "next/image";
-import ImageLabel from "../ImageLable";
 import classes from "./tweetFeed.module.scss";
+import Link from "next/link";
+import TweetHeader from "./tweetHeader";
+import TweetBody from "./tweetBody";
+import TweetFooter from "./tweetFooter";
 const TweetFeed = ({ tweet }) => {
+  const tweetHeader = {
+    authorImage: tweet.authorImage,
+    authorName: tweet.authorName,
+    date: tweet.date,
+    time: tweet.time,
+  };
+  const tweetBody = {
+    tweetMessage: tweet.tweetMessage,
+    tweetImage: tweet.tweetImage,
+  };
+  const tweetLink = `/comment/${tweet._id}`;
   return (
     <div className={classes.tweet}>
-      <div className={classes.tweetHeader}>
-        <div className={classes.author}>
-          <ImageLabel url={tweet.authorImage} />
-        </div>
-        <div className={classes.authorDetails}>
-          <div className={classes.authorName}>{tweet.authorName}</div>
-          <div className={classes.dateAndTime}>
-            {`${tweet.date} ${tweet.time}`}
-          </div>
-        </div>
-      </div>
-      <div>
-        <div className={classes.tweetMessage}>{tweet.tweetMessage}</div>
-        <div className={classes.tweetImage}>
-          <Image
-            src={tweet.tweetImage}
-            alt=""
-            height={200}
-            width={300}
-            layout="responsive"
-          />
-        </div>
-      </div>
+      <TweetHeader tweetHeader={tweetHeader} />
+      <Link href={tweetLink}>
+        <a>
+          <TweetBody tweetBody={tweetBody} />
+        </a>
+      </Link>
+      <TweetFooter url={tweetLink} />
     </div>
   );
 };

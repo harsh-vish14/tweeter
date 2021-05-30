@@ -28,3 +28,67 @@
     margin-left: 15px;
   }
 }
+.tweetFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  position: relative;
+  &::before {
+    content: "";
+    position: absolute;
+    top: -3px;
+    left: 0px;
+    height: 1px;
+    width: 100%;
+    background: var(--title-bar-color);
+  }
+  svg {
+    margin-right: 10px;
+  }
+}
+.message {
+  &:hover {
+    svg {
+      fill: #4f4f4f;
+      stroke: #4f4f4f;
+    }
+  }
+}
+.retweet {
+  &:hover {
+    svg {
+      transform: rotateZ(360deg);
+      transition: 1s;
+    }
+  }
+}
+
+.like {
+  &:hover {
+    svg {
+      fill: #e72525;
+      stroke: #e72525;
+    }
+  }
+}
+.Bookmark {
+  &:hover {
+    svg {
+      fill: #4f4f4f;
+      stroke: #4f4f4f;
+    }
+  }
+}
+.footerbtn {
+  display: flex;
+  width: auto;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  &:hover {
+    background: #f2f2f2;
+  }
+}

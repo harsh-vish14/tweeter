@@ -11,7 +11,6 @@ const Navbar = () => {
       </div>
       <div className={classes.link}>
         <NavLink href="/" text="Home" />
-        <NavLink href="/explore" text="explore" />
         <NavLink href="/bookmarks" text="bookmarks" />
       </div>
       <Dropdown />

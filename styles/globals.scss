@@ -6,6 +6,7 @@
   --dropdown-background-color: rgb(252, 252, 252);
   --input-background-color: #ffffff;
   --title-bar-color: #c0c0c0;
+  --text-color: black !important;
 }
 
 html,
@@ -16,10 +17,12 @@ body {
   font-family: "Poppins", sans-serif;
   color: var(--color);
 }
-
 a {
-  text-decoration: none;
-  color: black;
+  text-decoration: none !important;
+  color: var(--text-color);
+  &:hover {
+    color: var(--text-color);
+  }
 }
 
 * {

@@ -1,0 +1,21 @@
+.bar {
+  position: absolute;
+  top: 60px;
+  right: 0px;
+  background-color: #b9b9b9;
+  padding: 15px;
+  margin: 10px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.success {
+  background-color: #1c8a1c;
+  color: white;
+}
+.error {
+  background-color: #da2828;
+  color: white;
+}

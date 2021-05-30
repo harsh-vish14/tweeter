@@ -26,12 +26,6 @@ const Dropdown = () => {
         className={classes.button}
       >
         <ImageLabel url="/logos/tweeter-small.svg" />
-        {/* <Image
-          src="/logos/tweeter-small.svg"
-          alt="Logo"
-          height={50}
-          width={50}
-        /> */}
 
         <FaCaretDown className={classes.icon} />
       </div>
@@ -40,7 +34,6 @@ const Dropdown = () => {
           <NavLink href="/profile" text="Profile" />
           <div className={classes.dropdownLinks}>
             <NavLink href="/" text="Home" />
-            <NavLink href="/explore" text="explore" />
             <NavLink href="/bookmarks" text="bookmarks" />
           </div>
           <div className={classes.logout}>
