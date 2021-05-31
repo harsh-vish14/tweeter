@@ -12,8 +12,8 @@ export default NextAuth({
       async authorize(credentials) {
         const client = await connectDB();
         const db = client.db();
-        const userCollection = db.collection("users");
-        const user = userCollection.findOne({ email: credentials.email });
+        const userCollection = await db.collection("users");
+        const user = await userCollection.findOne({ email: credentials.email });
         if (!user) {
           client.close();
           throw new Error("User not found");
@@ -29,8 +29,24 @@ export default NextAuth({
         client.close();
         return {
           email: user.email,
+          image: user.authorImage,
         };
       },
     }),
   ],
+  // callbacks: {
+  //   async session(session, user) {
+  //     // console.log("session: ");
+  //     // console.log(session);
+  //     console.log("user");
+  //     console.log(user);
+  //     return {
+  //       user: {
+  //         name: "jandjasndajsnd",
+  //         email: "kakdasd@gmail.ascjasnd",
+  //         image: "jandjassndajssndasdjd",
+  //       },
+  //     };
+  //   },
+  // },
 });

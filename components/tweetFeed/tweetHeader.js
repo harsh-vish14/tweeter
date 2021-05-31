@@ -9,7 +9,7 @@ const TweetHeader = ({ tweetHeader }) => {
       <div className={classes.authorDetails}>
         <div className={classes.authorName}>{tweetHeader.authorName}</div>
         <div className={classes.dateAndTime}>
-          {`${tweetHeader.date} ${tweetHeader.time}`}
+          {`${new Date(tweetHeader.dateAndTime)}`}
         </div>
       </div>
     </div>

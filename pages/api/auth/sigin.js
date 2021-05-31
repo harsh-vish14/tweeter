@@ -3,15 +3,10 @@ import { connectDB } from "../../../lib/dbConnect";
 
 const handler = async (req, res) => {
   if (req.method === "POST") {
-    console.log(req.body);
     const { name, email, password, image } = req.body;
-    var userImage;
-    if (image) {
-      userImage = image;
-    } else {
-      userImage =
-        "https://lh3.googleusercontent.com/proxy/FCdpjMVHLVL8r1WsK1IQM_SgRWzL4TonmtygG-0CWdmwJ3DOf4rktZKAeK-Fr_qFA7JT4waNpKz48KT4bC_67tf-jo0lMQ1laJk369Qnurcbfw";
-    }
+    console.log(req.body);
+    var userImage = image || "/default.png";
+
     if (!email || !password || !email.includes("@") || !name) {
       res.status(422).json({ err: "Invalid Response" });
       return;
@@ -33,6 +28,7 @@ const handler = async (req, res) => {
       password: hashedPassword,
       authorName: name,
       authorImage: userImage,
+      authorTweets: [],
     });
     res.status(201).json({ message: "user Registered" });
   }

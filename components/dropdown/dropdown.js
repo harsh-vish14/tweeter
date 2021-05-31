@@ -1,12 +1,18 @@
 import { useState, useEffect, useRef } from "react";
 import NavLink from "../layout/navabar/NavLink";
 import { FaCaretDown, FaSignOutAlt } from "react-icons/fa";
+import { signOut, useSession } from "next-auth/client";
 import classes from "./dropdown.module.scss";
 import ImageLabel from "../ImageLable";
+
 const Dropdown = () => {
   const [showDropdown, setShowDropdown] = useState(false);
+  const [session, loading] = useSession();
   const dropdown = useRef(null);
-
+  const logoutHandler = () => {
+    console.log("logout clicked");
+    signOut();
+  };
   useEffect(() => {
     // only add the event listener when the dropdown is opened
     if (!showDropdown) return;
@@ -25,7 +31,7 @@ const Dropdown = () => {
         onClick={() => setShowDropdown((b) => !b)}
         className={classes.button}
       >
-        <ImageLabel url="/logos/tweeter-small.svg" />
+        <ImageLabel url="/default.png" />
 
         <FaCaretDown className={classes.icon} />
       </div>
@@ -36,7 +42,7 @@ const Dropdown = () => {
             <NavLink href="/" text="Home" />
             <NavLink href="/bookmarks" text="bookmarks" />
           </div>
-          <div className={classes.logout}>
+          <div className={classes.logout} onClick={logoutHandler}>
             Logout <FaSignOutAlt style={{ marginLeft: "10px" }} />
           </div>
         </div>
