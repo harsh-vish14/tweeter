@@ -8,7 +8,6 @@ const saveTweet = async (tweetData, useremail, dateAndTime) => {
     useremail,
     dateAndTime,
   };
-  // console.log(tweetsData);
   const res = await fetch("/api/tweets/tweetssave", {
     method: "POST",
     body: JSON.stringify(tweetsData),
@@ -22,16 +21,29 @@ const saveTweet = async (tweetData, useremail, dateAndTime) => {
   }
   return { ok: true };
 };
-
-export default function Home({ tweets }) {
+const fetchAllData = async () => {
+  const res = await fetch("/api/tweets/alltweets");
+  const data = await res.json();
+  const tweets = data;
+  return tweets;
+};
+export default function Home() {
   const [session, loading] = useSession();
-  const [tweetsData, setTweetsData] = useState(tweets);
+  const [tweetsData, setTweetsData] = useState([]);
+  console.log(session);
+
+  useEffect(async () => {
+    const tweets = await fetchAllData();
+    setTweetsData(tweets);
+  }, []);
   const sendTweethandeler = async (tweetData, useremail, dateAndTime) => {
     const result = await saveTweet(tweetData, useremail, dateAndTime);
+
     if (result.ok) {
       const tweetdata = await fetchAllData();
       setTweetsData(tweetdata);
     }
+
     return result;
   };
 
@@ -49,10 +61,8 @@ export const getServerSideProps = async (context) => {
       },
     };
   }
-  const res = await fetch("http://localhost:3000/api/tweets/alltweets");
-  const data = await res.json();
-  const tweets = data;
+
   return {
-    props: { tweets },
+    props: {},
   };
 };

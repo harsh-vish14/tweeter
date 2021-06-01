@@ -6,4 +6,7 @@ module.exports = {
       "lh3.googleusercontent.com",
     ],
   },
+  env: {
+    APIKEY: "ee0480b6-1731-49ed-a520-934ae520956e",
+  },
 };

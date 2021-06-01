@@ -4,9 +4,9 @@ import TweetFeed from "../tweetFeed/tweetFeed";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/client";
 const HomePage = ({ tweets, sendTweethandeler }) => {
-  const [tweetsData, setTweetsData] = useState(tweets);
+  // const [tweetsData, setTweetsData] = useState(tweets);
   const [session, loading] = useSession();
-  console.log(tweetsData);
+  // console.log(tweetsData);
   useEffect(() => {
     console.log(tweets);
   }, [tweets]);
@@ -18,8 +18,8 @@ const HomePage = ({ tweets, sendTweethandeler }) => {
   return (
     <div className={classes.home}>
       <InputBox submitTweetHandler={submitTweetHandler} />
-      {tweetsData.map((tweet) => {
-        return <TweetFeed tweet={tweet} />;
+      {tweets.map((tweet) => {
+        return <TweetFeed key={tweet._id} tweet={tweet} />;
       })}
     </div>
   );
