@@ -37,7 +37,9 @@ const Dropdown = () => {
       </div>
       {showDropdown && (
         <div ref={dropdown} className={classes.dropdown}>
-          <NavLink href="/profile" text="Profile" />
+          <div style={{ marginBottom: "9px" }}>
+            <NavLink href={`/profile/${session.user.name}`} text="Profile" />
+          </div>
           <div className={classes.dropdownLinks}>
             <NavLink href="/" text="Home" />
             <NavLink href="/bookmarks" text="bookmarks" />

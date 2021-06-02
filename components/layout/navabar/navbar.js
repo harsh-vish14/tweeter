@@ -3,7 +3,8 @@ import Image from "next/image";
 import { useSession } from "next-auth/client";
 import classes from "./navbar.module.scss";
 import Dropdown from "../../dropdown/dropdown";
-import { useState } from "react";
+// import { useState } from "react";
+import Link from "next/link";
 
 const Navbar = () => {
   const [session, loading] = useSession();
@@ -14,7 +15,16 @@ const Navbar = () => {
   return (
     <div className={classes.navbar}>
       <div>
-        <Image src="/logos/tweeter.svg" alt="Logo" height={70} width={100} />
+        <Link href="/">
+          <a>
+            <Image
+              src="/logos/tweeter.svg"
+              alt="Logo"
+              height={70}
+              width={100}
+            />
+          </a>
+        </Link>
       </div>
       <div className={classes.link}>
         {session && !loading ? (

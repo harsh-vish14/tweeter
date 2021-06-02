@@ -24,10 +24,11 @@ const handler = async (req, res) => {
     });
     const tweetId = tweetDetails.insertedId;
     const updatedComments = [...user.authorTweets, tweetId];
-    userdb.updateOne(
+    await userdb.updateOne(
       { _id: user._id },
       { $set: { authorTweets: updatedComments } }
     );
+    client.close();
     res.status(200).json({ message: "asjdnasjdn" });
   }
 };

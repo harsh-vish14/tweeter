@@ -2,7 +2,7 @@ import Image from "next/image";
 import classes from "./imageLable.module.scss";
 const ImageLabel = ({ url }) => {
   if (!url) {
-    return <h1>'loading'</h1>;
+    return <h1>loading</h1>;
   }
   return (
     <div className={classes.imageLabel}>

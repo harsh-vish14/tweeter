@@ -1,3 +1,4 @@
+import Link from "next/link";
 import ImageLabel from "../ImageLable";
 import classes from "./tweetFeed.module.scss";
 const getMonth = (number) => {
@@ -27,10 +28,15 @@ const timeFormatter = (isoTime) => {
   )} ${date.getFullYear()} at ${date.getUTCHours()}:${date.getUTCMinutes()}`;
 };
 const TweetHeader = ({ tweetHeader }) => {
+  const profileUrl = `/profile/${tweetHeader.authorId}`;
   return (
     <div className={classes.tweetHeader}>
       <div className={classes.author}>
-        <ImageLabel url={tweetHeader.authorImage} />
+        <Link href={profileUrl}>
+          <a>
+            <ImageLabel url={tweetHeader.authorImage} />
+          </a>
+        </Link>
       </div>
       <div className={classes.authorDetails}>
         <div className={classes.authorName}>{tweetHeader.authorName}</div>

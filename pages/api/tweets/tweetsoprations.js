@@ -12,6 +12,7 @@ const handler = async (req, res) => {
       !operation == "like" ||
       !operation == "bookmark"
     ) {
+      client.close();
       res.status(422).json({ err: "Invalid tweet operation" });
     }
     const client = await connectDB();
@@ -20,6 +21,7 @@ const handler = async (req, res) => {
     const user = await userdb.findOne({ email: userEmail });
 
     if (!user) {
+      client.close();
       res.status(422).json({ err: "User not found" });
       return;
     }
@@ -28,27 +30,31 @@ const handler = async (req, res) => {
       _id: ObjectId(tweetId),
     });
     if (!tweet) {
+      client.close();
       res.status(422).json({ err: "tweet not found" });
       return;
     }
     switch (operation) {
       case "retweet":
-        userdb.updateOne(
+        await userdb.updateOne(
           { _id: user._id },
-          { $push: { authorTweets: ObjectId(tweetId) } }
+          { $addToSet: { authorTweets: ObjectId(tweetId) } }
         );
-        tweetdb.updateOne({ _id: tweet._id }, { $inc: { retweet: 1 } });
+        await tweetdb.updateOne({ _id: tweet._id }, { $inc: { retweet: 1 } });
         break;
+
       case "like":
-        tweetdb.updateOne({ _id: tweet._id }, { $inc: { like: 1 } });
+        await tweetdb.updateOne({ _id: tweet._id }, { $inc: { like: 1 } });
         break;
+
       case "bookmark":
-        userdb.updateOne(
+        await userdb.updateOne(
           { _id: user._id },
           { $addToSet: { bookmarks: ObjectId(tweetId) } }
         );
         break;
     }
+    client.close();
     res.status(201).json({ message: "success updated" });
   }
 };

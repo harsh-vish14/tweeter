@@ -1,0 +1,19 @@
+.smallLoading {
+  font-size: 30px;
+  color: #1e67ca;
+  text-align: center;
+  margin-top: 10px;
+  animation: rotateLoading 0.8s infinite linear;
+  svg {
+    margin-top: -4px;
+  }
+}
+
+@keyframes rotateLoading {
+  0% {
+    transform: rotateZ(0deg);
+  }
+  100% {
+    transform: rotateZ(360deg);
+  }
+}

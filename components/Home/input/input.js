@@ -5,6 +5,7 @@ import classes from "./input.module.scss";
 import ImageLabel from "../../ImageLable";
 import { useRef, useState } from "react";
 import { useSession } from "next-auth/client";
+import Link from "next/link";
 const InputBox = ({ submitTweetHandler }) => {
   const [show, setShow] = useState(false);
   const [session, loading] = useSession();
@@ -29,18 +30,20 @@ const InputBox = ({ submitTweetHandler }) => {
       Message: currentTweetMessage,
       Image: currentTweetImage,
     });
-    if (result === "ok") {
-      setImageUrl("");
-      tweetMessage.current.value = "";
-    }
+    setImageUrl("");
+    tweetMessage.current.value = "";
   };
   return (
     <div className={classes.inputBox}>
       <div className={classes.title}>Tweet Something</div>
       <div className={classes.input}>
-        <ImageLabel
-          url={session ? session.user.image : "/logos/tweeter-small.svg"}
-        />
+        <Link href={`/profile/${session.user.name}`}>
+          <a>
+            <ImageLabel
+              url={session ? session.user.image : "/logos/tweeter-small.svg"}
+            />
+          </a>
+        </Link>
         <div style={{ width: "90%" }}>
           <textarea
             rows="3"

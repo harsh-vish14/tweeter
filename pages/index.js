@@ -1,6 +1,8 @@
 import HomePage from "../components/Home/HomePage";
 import { getSession, useSession } from "next-auth/client";
-import { useEffect, useState, useRef } from "react";
+import { useContext, useEffect, useState } from "react";
+import Loading from "../components/loading/loading";
+import { tweetsDetails } from "../store/tweetsDetails";
 
 const saveTweet = async (tweetData, useremail, dateAndTime) => {
   const tweetsData = {
@@ -21,33 +23,46 @@ const saveTweet = async (tweetData, useremail, dateAndTime) => {
   }
   return { ok: true };
 };
+
 const fetchAllData = async () => {
-  const res = await fetch("/api/tweets/alltweets");
+  const res = await fetch("/api/tweets");
   const data = await res.json();
   const tweets = data;
   return tweets;
 };
-export default function Home() {
-  const [session, loading] = useSession();
-  const [tweetsData, setTweetsData] = useState([]);
-  console.log(session);
 
+export default function Home() {
+  const tweetsContext = useContext(tweetsDetails);
+  const [session, loading] = useSession();
+  const [loadingData, setLoadingData] = useState(true);
   useEffect(async () => {
+    if (tweetsContext.tweets.length > 0) {
+      setLoadingData(false);
+    }
     const tweets = await fetchAllData();
-    setTweetsData(tweets);
-  }, []);
+    tweetsContext.setTweetsData(tweets);
+    setLoadingData(false);
+  }, [loading]);
+
   const sendTweethandeler = async (tweetData, useremail, dateAndTime) => {
     const result = await saveTweet(tweetData, useremail, dateAndTime);
 
     if (result.ok) {
       const tweetdata = await fetchAllData();
-      setTweetsData(tweetdata);
+      tweetsContext.setTweetsData(tweetdata);
     }
 
     return result;
   };
-
-  return <HomePage tweets={tweetsData} sendTweethandeler={sendTweethandeler} />;
+  if (loadingData) {
+    return <Loading />;
+  }
+  return (
+    <HomePage
+      tweets={tweetsContext.tweets}
+      sendTweethandeler={sendTweethandeler}
+    />
+  );
 }
 
 export const getServerSideProps = async (context) => {

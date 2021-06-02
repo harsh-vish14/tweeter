@@ -11,6 +11,7 @@ const TweetFeed = ({ tweet }) => {
     authorImage: tweet.authorDetails[0].authorImage,
     authorName: tweet.authorDetails[0].authorName,
     dateAndTime: tweet.dateAndTime,
+    authorId: tweet.authorDetails[0]._id,
   };
   const tweetBody = {
     tweetMessage: tweet.tweetMessage,

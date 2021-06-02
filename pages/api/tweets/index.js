@@ -21,11 +21,12 @@ const handler = async (req, res) => {
       delete tweet.authorDetails[0]["authorTweets"];
       delete tweet.authorDetails[0]["password"];
       delete tweet.authorDetails[0]["email"];
-      // delete tweet.authorDetails[0]["email"];
+      delete tweet.authorDetails[0]["bookmarks"];
       return tweet;
     });
     myTweets.reverse();
     // console.log(newTweets);
+    client.close();
     res.status(200).json(myTweets);
   }
 };
