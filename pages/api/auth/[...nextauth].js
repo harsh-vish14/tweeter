@@ -35,19 +35,24 @@ export default NextAuth({
       },
     }),
   ],
-  // callbacks: {
-  //   async session(session, user) {
-  //     // console.log("session: ");
-  //     // console.log(session);
-  //     console.log("user");
-  //     console.log(user);
-  //     return {
-  //       user: {
-  //         name: "jandjasndajsnd",
-  //         email: "kakdasd@gmail.ascjasnd",
-  //         image: "jandjassndajssndasdjd",
-  //       },
-  //     };
-  //   },
-  // },
+  callbacks: {
+    async session(session, user) {
+      const client = await connectDB();
+      const db = client.db();
+      const userdb = await db
+        .collection("users")
+        .findOne({ email: session.user.email });
+      return {
+        user: {
+          username: userdb.authorName,
+          name: userdb._id,
+          email: userdb.email,
+          image: {
+            userImage: userdb.authorImage || "",
+            userHeader: userdb.header || "",
+          },
+        },
+      };
+    },
+  },
 });

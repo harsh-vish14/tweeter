@@ -24,6 +24,7 @@ const InputBox = ({ submitTweetHandler }) => {
           handleShow();
           return;
         }
+        return;
       }
     }
     const result = await submitTweetHandler({
@@ -34,60 +35,66 @@ const InputBox = ({ submitTweetHandler }) => {
     tweetMessage.current.value = "";
   };
   return (
-    <div className={classes.inputBox}>
-      <div className={classes.title}>Tweet Something</div>
-      <div className={classes.input}>
-        <Link href={`/profile/${session.user.name}`}>
-          <a>
-            <ImageLabel
-              url={session ? session.user.image : "/logos/tweeter-small.svg"}
+    !loading && (
+      <div className={classes.inputBox}>
+        <div className={classes.title}>Tweet Something</div>
+        <div className={classes.input}>
+          <Link href={`/profile/${session.user.name}`}>
+            <a>
+              <ImageLabel
+                url={
+                  session
+                    ? session.user.image.userImage
+                    : "/logos/tweeter-small.svg"
+                }
+              />
+            </a>
+          </Link>
+          <div style={{ width: "90%" }}>
+            <textarea
+              rows="3"
+              maxLength="100"
+              placeholder="What’s happening?"
+              ref={tweetMessage}
             />
-          </a>
-        </Link>
-        <div style={{ width: "90%" }}>
-          <textarea
-            rows="3"
-            maxLength="100"
-            placeholder="What’s happening?"
-            ref={tweetMessage}
-          />
-          <div className={classes.inputFooter}>
-            <div className={classes.footericon} onClick={handleShow}>
-              <BsCardImage />
-            </div>
-            <div className={classes.tweetsBtn} onClick={tweetHandler}>
-              Tweet
+            <div className={classes.inputFooter}>
+              <div className={classes.footericon} onClick={handleShow}>
+                <BsCardImage />
+              </div>
+              <div className={classes.tweetsBtn} onClick={tweetHandler}>
+                Tweet
+              </div>
             </div>
           </div>
         </div>
+        <Modal show={show} onHide={handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Add Image</Modal.Title>
+          </Modal.Header>
+          <input
+            type="text"
+            placeholder="Image url"
+            className={classes.modelInput}
+            onChange={(e) => {
+              setImageUrl(e.target.value);
+            }}
+            value={imageurl}
+          />
+          <div>
+            Not have url use this 👉🏻
+            <a href="https://drop-images-to-link.netlify.app/" target="_blank">
+              [image to url converter]
+            </a>{" "}
+            or unsplash Images are only allowed
+          </div>
+          <Modal.Footer>
+            <Button variant="primary" onClick={handleClose}>
+              Add image
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </div>
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Add Image</Modal.Title>
-        </Modal.Header>
-        <input
-          type="text"
-          placeholder="Image url"
-          className={classes.modelInput}
-          onChange={(e) => {
-            setImageUrl(e.target.value);
-          }}
-          value={imageurl}
-        />
-        <div>
-          Not have url use this 👉🏻
-          <a href="https://drop-images-to-link.netlify.app/" target="_blank">
-            [image to url converter]
-          </a>{" "}
-          or unsplash Images are only allowed
-        </div>
-        <Modal.Footer>
-          <Button variant="primary" onClick={handleClose}>
-            Add image
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </div>
+    )
   );
 };
 

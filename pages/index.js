@@ -3,26 +3,7 @@ import { getSession, useSession } from "next-auth/client";
 import { useContext, useEffect, useState } from "react";
 import Loading from "../components/loading/loading";
 import { tweetsDetails } from "../store/tweetsDetails";
-
-const saveTweet = async (tweetData, useremail, dateAndTime) => {
-  const tweetsData = {
-    ...tweetData,
-    useremail,
-    dateAndTime,
-  };
-  const res = await fetch("/api/tweets/tweetssave", {
-    method: "POST",
-    body: JSON.stringify(tweetsData),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  const data = await res.json();
-  if (!res.ok) {
-    return { ok: false };
-  }
-  return { ok: true };
-};
+import { getBookmarks, saveTweet } from "../lib/gettingandsetting";
 
 const fetchAllData = async () => {
   const res = await fetch("/api/tweets");
@@ -32,10 +13,12 @@ const fetchAllData = async () => {
 };
 
 export default function Home() {
+  const getSessiona = getSession();
   const tweetsContext = useContext(tweetsDetails);
   const [session, loading] = useSession();
   const [loadingData, setLoadingData] = useState(true);
   useEffect(async () => {
+    console.log(session);
     if (tweetsContext.tweets.length > 0) {
       setLoadingData(false);
     }
@@ -44,6 +27,12 @@ export default function Home() {
     setLoadingData(false);
   }, [loading]);
 
+  useEffect(async () => {
+    if (session) {
+      const bookmarks = await getBookmarks(session.user.email);
+      tweetsContext.setBookmarksData(bookmarks.data);
+    }
+  }, [session]);
   const sendTweethandeler = async (tweetData, useremail, dateAndTime) => {
     const result = await saveTweet(tweetData, useremail, dateAndTime);
 

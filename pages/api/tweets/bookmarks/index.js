@@ -24,17 +24,18 @@ const handler = async (req, res) => {
       return;
     }
     const tweetsArray = [];
-    const tweets = await tweetsdb.find({
-      _id: { $in: user.bookmarks },
-    });
-    const cursorTweets = await filterCursor(tweets);
+    const tweets = await tweetsdb
+      .find({
+        _id: { $in: user.bookmarks },
+      })
+      .toArray();
 
-    for (let i = 0; i < cursorTweets.length; i++) {
+    for (let i = 0; i < tweets.length; i++) {
       const users = await userdb.findOne({
-        _id: ObjectId(cursorTweets[i].authorId),
+        _id: ObjectId(tweets[i].authorId),
       });
       tweetsArray.push({
-        ...cursorTweets[i],
+        ...tweets[i],
         authorDetails: [
           {
             _id: users._id,

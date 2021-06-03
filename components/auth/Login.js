@@ -35,11 +35,11 @@ const Login = () => {
       });
       return;
     }
+    router.replace("/");
     setbannerData({
       status: "success",
       message: "logged in successfully!",
     });
-    router.replace("/");
   };
   return (
     <section className={classes.auth}>
