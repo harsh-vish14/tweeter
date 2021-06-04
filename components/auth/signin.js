@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { FiStar } from "react-icons/fi";
 import Indicator from "../indicator/indicator";
 import { useRef, useState } from "react";
 import { useRouter } from "next/router";
@@ -65,16 +66,31 @@ const SignIn = () => {
           </div>
         </div>
         <div className={classes.control}>
-          <label htmlFor="name">Your Name</label>
+          <label htmlFor="name">
+            Your Name
+            <span className="imp">
+              <FiStar />
+            </span>
+          </label>
           <input type="name" id="name" required ref={name} />
         </div>
 
         <div className={classes.control}>
-          <label htmlFor="email">Your Email</label>
+          <label htmlFor="email">
+            Your Email
+            <span className="imp">
+              <FiStar />
+            </span>
+          </label>
           <input type="email" id="email" required ref={email} />
         </div>
         <div className={classes.control}>
-          <label htmlFor="password">Your Password</label>
+          <label htmlFor="password">
+            Your Password
+            <span className="imp">
+              <FiStar />
+            </span>
+          </label>
           <input type="password" id="password" required ref={password} />
         </div>
         <div className={classes.actions}>

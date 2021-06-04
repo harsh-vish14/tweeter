@@ -1,6 +1,8 @@
 import { getSession } from "next-auth/client";
-const Profile = () => {
-  return <div>Profile</div>;
+
+import Profile from "../../components/profile/profile";
+const ProfilePage = ({ session, id }) => {
+  return session && <Profile id={id} session={session} />;
 };
 
 export const getServerSideProps = async (context) => {
@@ -15,7 +17,7 @@ export const getServerSideProps = async (context) => {
     };
   }
   return {
-    props: {},
+    props: { session, id: context.query.userId },
   };
 };
-export default Profile;
+export default ProfilePage;

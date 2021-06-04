@@ -16,6 +16,7 @@ const userProfile = async (req, res) => {
     }
     const profileDetails = await userdb
       .aggregate([
+        { $match: { _id: ObjectId(profileId) } },
         { $unwind: "$authorTweets" },
         {
           $lookup: {
@@ -30,6 +31,8 @@ const userProfile = async (req, res) => {
           $group: {
             _id: "$_id",
             authorName: { $first: "$authorName" },
+            authorImage: { $first: "$authorImage" },
+            headerImage: { $first: "$headerImage" },
             userTweets: { $push: "$userTweets" },
           },
         },

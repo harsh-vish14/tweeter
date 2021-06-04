@@ -12,40 +12,41 @@ const handler = async (req, res) => {
     req.method === "POST" &&
     req.headers.authorization === process.env.APIKEY
   ) {
-    const userEmail = req.body.email;
+    const id = req.body.id;
     const client = await connectDB();
     const db = client.db();
     const userdb = await db.collection("users");
-    const tweetsdb = await db.collection("tweets");
-    const user = await userdb.findOne({ email: userEmail });
-
+    // const tweetsdb = await db.collection("tweet1s");
+    const user = await userdb.findOne({ _id: ObjectId(id) });
+    console.log(user);
     if (!user) {
       res.status(422).json({ err: "User not found" });
       return;
     }
-    const tweetsArray = [];
-    const tweets = await tweetsdb
-      .find({
-        _id: { $in: user.bookmarks },
-      })
-      .toArray();
-
-    for (let i = 0; i < tweets.length; i++) {
-      const users = await userdb.findOne({
-        _id: ObjectId(tweets[i].authorId),
-      });
-      tweetsArray.push({
-        ...tweets[i],
-        authorDetails: [
-          {
-            _id: users._id,
-            authorName: users.authorName,
-            authorImage: users.authorImage,
+    const bookmarks = await userdb
+      .aggregate([
+        { $match: { _id: ObjectId(id) } },
+        { $unwind: "$bookmarks" },
+        {
+          $lookup: {
+            from: "tweets",
+            foreignField: "_id",
+            localField: "bookmarks",
+            as: "tweetsData",
           },
-        ],
-      });
-    }
-    res.status(200).json(tweetsArray);
+        },
+        { $unwind: "$tweetsData" },
+        {
+          $project: {
+            _id: 1,
+            authorName: 1,
+            authorImage: 1,
+            tweetsData: 1,
+          },
+        },
+      ])
+      .toArray();
+    res.status(200).json(bookmarks);
   }
 };
 

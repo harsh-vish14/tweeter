@@ -1,6 +1,7 @@
 import Indicator from "../indicator/indicator";
+import { FiStar } from "react-icons/fi";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { signIn } from "next-auth/client";
 import { useRouter } from "next/router";
 import classes from "./auth.module.scss";
@@ -13,6 +14,7 @@ const Login = () => {
     status: "",
     message: "Loading....",
   });
+
   const handelSubmit = async (e) => {
     e.preventDefault();
     const currentEmail = email.current.value;
@@ -46,11 +48,21 @@ const Login = () => {
       <h1>Login</h1>
       <form onSubmit={handelSubmit}>
         <div className={classes.control}>
-          <label htmlFor="email">Your Email</label>
+          <label htmlFor="email">
+            Your Email{" "}
+            <span className="imp">
+              <FiStar />
+            </span>
+          </label>
           <input ref={email} type="email" id="email" required />
         </div>
         <div className={classes.control}>
-          <label htmlFor="password">Your Password</label>
+          <label htmlFor="password">
+            Your Password
+            <span className="imp">
+              <FiStar />
+            </span>
+          </label>
           <input ref={password} type="password" id="password" required />
         </div>
         <div className={classes.actions}>

@@ -28,3 +28,10 @@ a {
 * {
   box-sizing: border-box;
 }
+.imp {
+  svg {
+    fill: red;
+    stroke: red;
+  }
+  font-size: 10px;
+}

@@ -29,6 +29,7 @@ const handler = async (req, res) => {
       authorName: name,
       authorImage: userImage,
       authorTweets: [],
+      bookmarks: [],
     });
     res.status(201).json({ message: "user Registered" });
   }

@@ -13,10 +13,10 @@ const BookMark = () => {
   // const [bookmarks, setBookmarks] = useState([]);
   useEffect(async () => {
     if (session) {
-      if (tweetsContext.bookmarksm) {
+      if (tweetsContext.bookmarks.length != 0) {
         setLoadingData(false);
       }
-      const tweetsData = await getBookmarks(session.user.email);
+      const tweetsData = await getBookmarks(session.user.name);
       tweetsContext.setBookmarksData(tweetsData.data);
       setLoadingData(false);
     }

@@ -6,7 +6,7 @@ const Layout = (props) => {
   const [session, loading] = useSession();
   return (
     <Fragment>
-      {session && <Navbar session={session} />}
+      {!loading && <Navbar session={session} />}
       <main>{props.children}</main>
     </Fragment>
   );

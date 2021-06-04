@@ -11,6 +11,7 @@ const HomePage = ({ tweets, sendTweethandeler }) => {
   useEffect(() => {
     console.log(tweets);
   }, [tweets]);
+
   const submitTweetHandler = async (tweetData) => {
     setShowSmallLoader(true);
     const date = new Date();
@@ -25,9 +26,29 @@ const HomePage = ({ tweets, sendTweethandeler }) => {
       <div style={{ display: showSmallLoader ? "" : "none" }}>
         <SmallLoading />
       </div>
-      {tweets.map((tweet) => {
-        return <TweetFeed key={tweet._id} tweet={tweet} />;
-      })}
+      {tweets &&
+        tweets.map((tweet) => {
+          const tweetHeader = {
+            authorImage: tweet.authorDetails.authorImage,
+            authorName: tweet.authorDetails.authorName,
+            dateAndTime: tweet.dateAndTime,
+            authorId: tweet.authorDetails._id,
+          };
+          const tweetBody = {
+            tweetMessage: tweet.tweetMessage,
+            tweetImage: tweet.tweetImage,
+          };
+          return (
+            <TweetFeed
+              key={tweet._id}
+              tweetBody={tweetBody}
+              tweetHeader={tweetHeader}
+              tweetId={tweet._id}
+              likesdata={tweet.like || 0}
+              retweetdata={tweet.retweet || 0}
+            />
+          );
+        })}
     </div>
   );
 };

@@ -31,7 +31,9 @@ const Dropdown = () => {
         onClick={() => setShowDropdown((b) => !b)}
         className={classes.button}
       >
-        <ImageLabel url="/default.png" />
+        <ImageLabel
+          url={session ? session.user.image.userImage : "/default.png"}
+        />
 
         <FaCaretDown className={classes.icon} />
       </div>
