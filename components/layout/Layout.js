@@ -7,7 +7,9 @@ const Layout = (props) => {
   return (
     <Fragment>
       {!loading && <Navbar session={session} />}
-      <main>{props.children}</main>
+      <div style={{ marginTop: "78px" }}>
+        <main>{props.children}</main>
+      </div>
     </Fragment>
   );
 };

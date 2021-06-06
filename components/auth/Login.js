@@ -30,17 +30,17 @@ const Login = () => {
       email: currentEmail,
       password: currentPassword,
     });
-    if (result.error) {
+    if (!result.error) {
+      router.push("/", undefined, { shallow: true });
       setbannerData({
-        status: "error",
-        message: result.error,
+        status: "success",
+        message: "logged in successfully!",
       });
       return;
     }
-    router.replace("/");
     setbannerData({
-      status: "success",
-      message: "logged in successfully!",
+      status: "error",
+      message: result.error,
     });
   };
   return (

@@ -46,6 +46,18 @@ const handler = async (req, res) => {
         },
       ])
       .toArray();
+
+    for (let i = 0; i < bookmarks.length; i++) {
+      if (user._id != bookmarks[i].tweetsData.authorId) {
+        const userfound = await userdb.findOne({
+          _id: ObjectId(bookmarks[i].tweetsData.authorId),
+        });
+        // console.log();
+        bookmarks[i]._id = userfound._id;
+        bookmarks[i].authorName = userfound.authorName;
+        bookmarks[i].authorImage = userfound.authorImage;
+      }
+    }
     res.status(200).json(bookmarks);
   }
 };

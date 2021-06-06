@@ -21,6 +21,7 @@ const handler = async (req, res) => {
     const userPresent = await db.collection("users").findOne({ email });
     if (userPresent) {
       res.status(422).json({ err: "User already exists" });
+      return;
     }
     const hashedPassword = await hashPassword(password);
     await db.collection("users").insertOne({
@@ -28,9 +29,14 @@ const handler = async (req, res) => {
       password: hashedPassword,
       authorName: name,
       authorImage: userImage,
+      authorHeader: "",
+      authorBio: "",
+      followers: [],
+      following: [],
       authorTweets: [],
       bookmarks: [],
     });
+    client.close();
     res.status(201).json({ message: "user Registered" });
   }
 };

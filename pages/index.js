@@ -13,7 +13,6 @@ const fetchAllData = async () => {
 };
 
 export default function Home() {
-  const getSessiona = getSession();
   const tweetsContext = useContext(tweetsDetails);
   const [session, loading] = useSession();
   const [loadingData, setLoadingData] = useState(true);

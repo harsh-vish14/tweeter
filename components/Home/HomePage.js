@@ -32,7 +32,7 @@ const HomePage = ({ tweets, sendTweethandeler }) => {
             authorImage: tweet.authorDetails.authorImage,
             authorName: tweet.authorDetails.authorName,
             dateAndTime: tweet.dateAndTime,
-            authorId: tweet.authorDetails._id,
+            authorId: tweet.authorId,
           };
           const tweetBody = {
             tweetMessage: tweet.tweetMessage,

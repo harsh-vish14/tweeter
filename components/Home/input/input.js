@@ -80,7 +80,7 @@ const InputBox = ({ submitTweetHandler }) => {
             }}
             value={imageurl}
           />
-          <div>
+          <div className={classes.helper}>
             Not have url use this 👉🏻
             <a href="https://drop-images-to-link.netlify.app/" target="_blank">
               [image to url converter]

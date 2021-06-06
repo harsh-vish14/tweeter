@@ -8,38 +8,72 @@ const userProfile = async (req, res) => {
     const client = await connectDB();
     const db = client.db();
     const userdb = await db.collection("users");
-    const user = await userdb.findOne({ _id: ObjectId(profileId) });
+    const tweetdb = await db.collection("tweets");
+    const user = await userdb.findOne(
+      { _id: ObjectId(profileId) },
+      {
+        projection: {
+          _id: 1,
+          authorName: 1,
+          authorImage: 1,
+          authorHeader: 1,
+          authorTweets: 1,
+        },
+      }
+    );
     if (!user) {
       client.close();
       res.status(422).json({ err: "User not found" });
       return;
     }
-    const profileDetails = await userdb
+
+    const profileDetails = await tweetdb
       .aggregate([
-        { $match: { _id: ObjectId(profileId) } },
-        { $unwind: "$authorTweets" },
         {
           $lookup: {
-            from: "tweets",
-            localField: "authorTweets",
+            from: "users",
+            localField: "authorId",
             foreignField: "_id",
-            as: "userTweets",
+            as: "authorDetails",
           },
         },
-        { $unwind: "$userTweets" },
+        { $unwind: "$authorDetails" },
         {
-          $group: {
-            _id: "$_id",
-            authorName: { $first: "$authorName" },
-            authorImage: { $first: "$authorImage" },
-            headerImage: { $first: "$headerImage" },
-            userTweets: { $push: "$userTweets" },
+          $project: {
+            _id: 1,
+            tweetMessage: 1,
+            tweetImage: 1,
+            authorId: 1,
+            dateAndTime: 1,
+            comments: 1,
+            like: 1,
+            retweet: 1,
+            "authorDetails.authorName": 1,
+            "authorDetails.authorImage": 1,
           },
         },
       ])
       .toArray();
-    console.log(profileDetails);
-    res.status(200).json(profileDetails);
+
+    const stringUserAuthorTweets = user.authorTweets.map((tweetId) =>
+      tweetId.toString()
+    );
+    delete user.authorTweets;
+    // console.log(stringUserAuthorTweets);
+    const tweetFilter = profileDetails
+      .filter((id) => {
+        return stringUserAuthorTweets.includes(id._id.toString());
+      })
+      .reverse();
+
+    const finalResult = {
+      ...user,
+      tweetFilter,
+    };
+
+    // console.log(filteredResult);
+    // console.log(user.authorTweets.includes(tweet._id));
+    res.status(200).json(finalResult);
   }
 };
 
