@@ -1,5 +1,6 @@
 import { hashPassword } from "../../../lib/auth";
-import { connectDB } from "../../../lib/dbConnect";
+import { db } from "../../../lib/dbConnect";
+// import { connectDB } from "../../../lib/dbConnect";
 
 const handler = async (req, res) => {
   if (req.method === "POST") {
@@ -16,15 +17,18 @@ const handler = async (req, res) => {
       res.status(422).json({ err: "Small password" });
       return;
     }
-    const client = await connectDB();
-    const db = client.db();
-    const userPresent = await db.collection("users").findOne({ email });
-    if (userPresent) {
+
+    const user = await db
+      .collection("users")
+      .where("email", "in", [email])
+      .get();
+
+    if (!user.empty) {
       res.status(422).json({ err: "User already exists" });
       return;
     }
     const hashedPassword = await hashPassword(password);
-    await db.collection("users").insertOne({
+    db.collection("users").add({
       email,
       password: hashedPassword,
       authorName: name,
@@ -36,8 +40,7 @@ const handler = async (req, res) => {
       authorTweets: [],
       bookmarks: [],
     });
-    client.close();
-    res.status(201).json({ message: "user Registered" });
+    res.status(201).json({ message: "Added user successfully" });
   }
 };
 

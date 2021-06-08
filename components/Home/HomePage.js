@@ -15,8 +15,8 @@ const HomePage = ({ tweets, sendTweethandeler }) => {
   const submitTweetHandler = async (tweetData) => {
     setShowSmallLoader(true);
     const date = new Date();
-    await sendTweethandeler(tweetData, session.user.email, date.toISOString());
-    console.log("tweets Getted successfully");
+    await sendTweethandeler(tweetData, session.user.name, date.toISOString());
+    console.log("tweets Added successfully");
     setShowSmallLoader(false);
   };
 

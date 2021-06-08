@@ -1,12 +1,17 @@
 import Link from "next/link";
+import Image from "next/image";
 import { FiStar } from "react-icons/fi";
+import { v4 as uuidv4 } from "uuid";
+import { CgProfile } from "react-icons/cg";
 import Indicator from "../indicator/indicator";
 import { useRef, useState } from "react";
 import { useRouter } from "next/router";
 import classes from "./auth.module.scss";
+import { storage } from "../../lib/dbConnect";
 
 const signUp = async (image, name, password, email) => {
   const response = { name, email, password, image };
+
   const res = await fetch("/api/auth/sigin", {
     method: "POST",
     body: JSON.stringify(response),
@@ -23,6 +28,9 @@ const signUp = async (image, name, password, email) => {
 };
 const SignIn = () => {
   const router = useRouter();
+  const [currentImage, setCurrentImage] = useState("/default.png");
+  const [progress, setProgress] = useState(0);
+  const [imageData, setImageData] = useState();
   const [showBanner, setShowBanner] = useState(false);
   const [bannerData, setbannerData] = useState({
     status: "",
@@ -31,7 +39,6 @@ const SignIn = () => {
   const email = useRef();
   const name = useRef();
   const password = useRef();
-  const image = useRef();
 
   const SubmitForm = async (e) => {
     e.preventDefault();
@@ -40,8 +47,39 @@ const SignIn = () => {
       status: "",
       message: "Loading.....",
     });
+    var image = "/default.png";
+    if (currentImage != "/default.png") {
+      var metadata = {
+        contentType: "image/jpeg",
+      };
+      const imageName = uuidv4();
+      await storage
+        .ref(`profileImage/${imageName}${imageData.name}`)
+        .put(imageData, metadata)
+        .on(
+          "state_changed",
+          (snapshot) => {
+            const progress = Math.round(
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+            );
+            setProgress(progress);
+            // console.log(progress);
+          },
+          (err) => {},
+          () => {
+            storage
+              .ref("profileImage")
+              .child(`${imageName}${imageData.name}`)
+              .getDownloadURL()
+              .then((fireBaseUrl) => {
+                image = fireBaseUrl;
+              });
+          }
+        );
+    }
+    console.log(imageData);
     const result = await signUp(
-      image.current.value,
+      image,
       name.current.value,
       password.current.value,
       email.current.value
@@ -50,58 +88,85 @@ const SignIn = () => {
     if (result.status === "success") {
       router.push("/auth/login");
     }
+    const pictureRef = storage.refFromURL(image);
+
+    pictureRef.delete();
+  };
+  const uploadImage = (e) => {
+    if (
+      e.target.files[0].type === "image/png" ||
+      e.target.files[0].type === "image/jpeg"
+    ) {
+      var image = URL.createObjectURL(e.target.files[0]);
+      setImageData(e.target.files[0]);
+      setCurrentImage(image);
+    }
   };
   return (
-    <section className={classes.auth}>
-      <h1>Sign In</h1>
-      <form onSubmit={SubmitForm}>
-        <div className={classes.control}>
-          <label htmlFor="image">Your Profile Image url</label>
-          <input type="text" id="image" ref={image} />
-          <div style={{ color: "white" }}>
-            Not have url use this 👉🏻
-            <a href="https://drop-images-to-link.netlify.app/" target="_blank">
-              image to url converter
-            </a>
+    <>
+      <div className={classes.profileImage}>
+        <img src={currentImage} height="125" width="125" />
+      </div>
+      <section className={classes.auth}>
+        <h1>Sign In</h1>
+        <div>
+          <div className={classes.control}>
+            <label htmlFor="name">
+              Your Name
+              <span className="imp">
+                <FiStar />
+              </span>
+            </label>
+            <input type="name" id="name" required ref={name} />
+          </div>
+
+          <div className={classes.control}>
+            <label htmlFor="email">
+              Your Email
+              <span className="imp">
+                <FiStar />
+              </span>
+            </label>
+            <input type="email" id="email" required ref={email} />
+          </div>
+          <div className={classes.control}>
+            <label htmlFor="password">
+              Your Password
+              <span className="imp">
+                <FiStar />
+              </span>
+            </label>
+            <input type="password" id="password" required ref={password} />
+          </div>
+          <div
+            className={classes.actions}
+            style={{ display: "flex", justifyContent: "space-between" }}
+          >
+            <button onClick={SubmitForm}>Sign In</button>
+            <button className={classes.saveImage}>
+              <label
+                htmlFor="fileInput"
+                className="images-upload-button"
+                style={{ border: "none", cursor: "pointer" }}
+              >
+                {`Set Profile Image ${progress == 0 ? "" : progress}`}
+              </label>
+              <input
+                id="fileInput"
+                type="file"
+                accept="images/*"
+                style={{ display: "none" }}
+                onChange={uploadImage}
+              />
+            </button>
           </div>
         </div>
-        <div className={classes.control}>
-          <label htmlFor="name">
-            Your Name
-            <span className="imp">
-              <FiStar />
-            </span>
-          </label>
-          <input type="name" id="name" required ref={name} />
-        </div>
-
-        <div className={classes.control}>
-          <label htmlFor="email">
-            Your Email
-            <span className="imp">
-              <FiStar />
-            </span>
-          </label>
-          <input type="email" id="email" required ref={email} />
-        </div>
-        <div className={classes.control}>
-          <label htmlFor="password">
-            Your Password
-            <span className="imp">
-              <FiStar />
-            </span>
-          </label>
-          <input type="password" id="password" required ref={password} />
-        </div>
-        <div className={classes.actions}>
-          <button>Sign In</button>
-        </div>
-      </form>
-      <Link href="/auth/login">Having account</Link>
-      {showBanner && (
-        <Indicator status={bannerData.status} message={bannerData.message} />
-      )}
-    </section>
+        <Link href="/auth/login">Having account</Link>
+        {showBanner && (
+          <Indicator status={bannerData.status} message={bannerData.message} />
+        )}
+      </section>
+    </>
   );
 };
 

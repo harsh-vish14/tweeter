@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import Provider from "next-auth/providers";
 import { verifyPassword } from "../../../lib/auth";
-import { connectDB } from "../../../lib/dbConnect";
+import { db } from "../../../lib/dbConnect";
 
 export default NextAuth({
   session: {
@@ -10,46 +10,51 @@ export default NextAuth({
   providers: [
     Provider.Credentials({
       async authorize(credentials) {
-        const client = await connectDB();
-        const db = client.db();
-        const userCollection = await db.collection("users");
-        const user = await userCollection.findOne({ email: credentials.email });
-        if (!user) {
-          client.close();
+        const user = await db
+          .collection("users")
+          .where("email", "in", [credentials.email])
+          .get();
+        const userData = [];
+        user.forEach((user) => {
+          userData.push(user.data());
+        });
+        if (user.empty) {
           throw new Error("User not found");
         }
+
         const isCorrent = await verifyPassword(
           credentials.password,
-          user.password
+          userData[0].password
         );
         if (!isCorrent) {
-          client.close();
           throw new Error("Invalid Password");
         }
-        client.close();
         return {
-          email: user.email,
-          image: user.authorImage,
-          name: user._id,
+          email: userData[0].email,
+          image: userData[0].authorImage,
+          name: userData[0]._id,
         };
       },
     }),
   ],
   callbacks: {
     async session(session, user) {
-      const client = await connectDB();
-      const db = client.db();
       const userdb = await db
         .collection("users")
-        .findOne({ email: session.user.email });
+        .where("email", "in", [session.user.email])
+        .get();
+      const userData = [];
+      userdb.forEach((user) => {
+        userData.push(user.data());
+      });
       return {
         user: {
-          username: userdb.authorName,
-          name: userdb._id,
-          email: userdb.email,
+          username: userData[0].authorName,
+          name: userdb.docs[0].id,
+          email: userData[0].email,
           image: {
-            userImage: userdb.authorImage || "",
-            userHeader: userdb.header || "",
+            userImage: userData[0].authorImage || "",
+            userHeader: userData[0].header || "",
           },
         },
       };

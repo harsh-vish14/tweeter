@@ -3,10 +3,10 @@ import { MdAutorenew } from "react-icons/md";
 import Link from "next/link";
 import classes from "./tweetFeed.module.scss";
 import { useSession } from "next-auth/client";
-const sendTweetOperation = async (userEmail, tweetId, operation) => {
+const sendTweetOperation = async (userId, tweetId, operation) => {
   const body = {
-    userEmail: userEmail,
-    tweetId: tweetId,
+    userId,
+    tweetId,
     operation,
   };
 
@@ -25,11 +25,12 @@ const TweetFooter = ({ url, tweetId, retweetAdd, likeAdd }) => {
   // const [message,setMessage]= useState
   const [session, loading] = useSession();
   const retweetClicked = () => {
-    sendTweetOperation(session.user.email, tweetId, "retweet");
+    console.log(session.user.name);
+    sendTweetOperation(session.user.name, tweetId, "retweet");
     retweetAdd();
   };
   const likeClicked = () => {
-    sendTweetOperation(session.user.email, tweetId, "like");
+    sendTweetOperation(session.user.name, tweetId, "like");
     likeAdd();
   };
   return (
@@ -69,7 +70,7 @@ const TweetFooter = ({ url, tweetId, retweetAdd, likeAdd }) => {
         className={`${classes.footerbtn} ${classes.Bookmark}`}
         title="Bookmark"
         onClick={() => {
-          sendTweetOperation(session.user.email, tweetId, "bookmark");
+          sendTweetOperation(session.user.name, tweetId, "bookmark");
         }}
       >
         <FiBookmark />

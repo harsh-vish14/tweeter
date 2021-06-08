@@ -22,11 +22,11 @@ const Profile = ({ id, session }) => {
     <div style={{ overflow: "hidden" }}>
       <ProfileHeader user={userTweet} session={session} />
       <div className={classes.tweets}>
-        {userTweet.tweetFilter &&
-          userTweet.tweetFilter.map((tweet) => {
+        {userTweet.tweets &&
+          userTweet.tweets.map((tweet) => {
             const tweetHeader = {
-              authorImage: tweet.authorDetails.authorImage,
-              authorName: tweet.authorDetails.authorName,
+              authorImage: tweet.userDetails.authorImage,
+              authorName: tweet.userDetails.authorName,
               dateAndTime: tweet.dateAndTime,
               authorId: tweet.authorId,
             };
@@ -34,6 +34,7 @@ const Profile = ({ id, session }) => {
               tweetMessage: tweet.tweetMessage,
               tweetImage: tweet.tweetImage,
             };
+
             return (
               <TweetFeed
                 key={tweet._id}

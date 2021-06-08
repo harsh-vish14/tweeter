@@ -21,7 +21,7 @@ const ProfileHeader = ({ user, session }) => {
     Name: user.authorName,
     Bio: user.authorBio,
   });
-  console.log(header);
+  // console.log(header);
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);

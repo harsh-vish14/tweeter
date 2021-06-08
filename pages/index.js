@@ -17,11 +17,6 @@ export default function Home() {
   const [session, loading] = useSession();
   const [loadingData, setLoadingData] = useState(true);
   useEffect(async () => {
-    console.log("loading session");
-    console.log(session);
-  }, [session]);
-  useEffect(async () => {
-    // console.log(session);
     if (tweetsContext.tweets.length > 0) {
       setLoadingData(false);
     }
@@ -36,16 +31,17 @@ export default function Home() {
       tweetsContext.setBookmarksData(bookmarks.data);
     }
   }, [session]);
-  const sendTweethandeler = async (tweetData, useremail, dateAndTime) => {
-    const result = await saveTweet(tweetData, useremail, dateAndTime);
+  const sendTweethandeler = async (tweetData, usereId, dateAndTime) => {
+    const result = await saveTweet(tweetData, usereId, dateAndTime);
 
     if (result.ok) {
       const tweetdata = await fetchAllData();
       tweetsContext.setTweetsData(tweetdata);
     }
-
+    console.log(result);
     return result;
   };
+
   if (loadingData) {
     return <Loading />;
   }

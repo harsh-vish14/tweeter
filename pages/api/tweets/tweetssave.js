@@ -1,35 +1,34 @@
-import { connectDB } from "../../../lib/dbConnect";
-
+import { connectDB, db } from "../../../lib/dbConnect";
+import firebase from "firebase";
 const handler = async (req, res) => {
   if (req.method === "POST") {
-    const { Message, Image, useremail, dateAndTime } = req.body;
-    if (!Message || !useremail) {
+    const { Message, Image, userId, dateAndTime } = req.body;
+    if (!Message || !userId) {
       res.status(422).json({ err: "Invalid Response" });
       return;
     }
-    const client = await connectDB();
-    const db = client.db();
-    const userdb = await db.collection("users");
-    const user = await userdb.findOne({ email: useremail });
-    if (!user) {
+
+    const user = await db.collection("users").doc(userId).get();
+    if (!user.exists) {
       res.status(422).json({ err: "User not found" });
     }
-
-    const tweetDetails = await db.collection("tweets").insertOne({
+    // console.log(Message, Image, userId, dateAndTime);
+    const date = new Date();
+    const tweet = await db.collection("tweets").add({
       tweetMessage: Message,
       tweetImage: Image,
-      authorId: user._id,
-      dateAndTime,
+      authorId: user.id,
+      dateAndTime: date.toISOString(),
       comments: [],
     });
-    const tweetId = tweetDetails.insertedId;
-    const updatedComments = [...user.authorTweets, tweetId];
-    await userdb.updateOne(
-      { _id: user._id },
-      { $set: { authorTweets: updatedComments } }
-    );
-    client.close();
-    res.status(200).json({ message: "asjdnasjdn" });
+    await db
+      .collection("users")
+      .doc(userId)
+      .update({
+        authorTweet: firebase.firestore.FieldValue.arrayUnion(tweet.id),
+      });
+
+    res.status(200).json({ message: "Added Tweet successfully" });
   }
 };
 
