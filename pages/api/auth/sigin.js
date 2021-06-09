@@ -6,7 +6,6 @@ const handler = async (req, res) => {
   if (req.method === "POST") {
     const { name, email, password, image } = req.body;
     console.log(req.body);
-    var userImage = image || "/default.png";
 
     if (!email || !password || !email.includes("@") || !name) {
       res.status(422).json({ err: "Invalid Response" });
@@ -32,7 +31,7 @@ const handler = async (req, res) => {
       email,
       password: hashedPassword,
       authorName: name,
-      authorImage: userImage,
+      authorImage: image,
       authorHeader: "",
       authorBio: "",
       followers: [],

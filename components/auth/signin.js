@@ -36,23 +36,26 @@ const SignIn = () => {
     status: "",
     message: "Loading.....",
   });
-  const email = useRef();
-  const name = useRef();
-  const password = useRef();
+  const emailvalue = useRef();
+  const namevalue = useRef();
+  const passwordvalue = useRef();
 
   const SubmitForm = async (e) => {
     e.preventDefault();
+    const name = namevalue.current.value;
+    const email = emailvalue.current.value;
+    const password = passwordvalue.current.value;
     setShowBanner(true);
     setbannerData({
       status: "",
       message: "Loading.....",
     });
-    var image = "/default.png";
+    const imageName = uuidv4();
+
     if (currentImage != "/default.png") {
       var metadata = {
         contentType: "image/jpeg",
       };
-      const imageName = uuidv4();
       await storage
         .ref(`profileImage/${imageName}${imageData.name}`)
         .put(imageData, metadata)
@@ -71,26 +74,33 @@ const SignIn = () => {
               .ref("profileImage")
               .child(`${imageName}${imageData.name}`)
               .getDownloadURL()
-              .then((fireBaseUrl) => {
-                image = fireBaseUrl;
+              .then(async (fireBaseUrl) => {
+                const image = fireBaseUrl;
+
+                const result = await signUp(image, name, password, email);
+                setbannerData(result);
+                if (result.status === "success") {
+                  router.push("/auth/login");
+                  return;
+                }
+
+                const pictureRef = storage.ref(
+                  `profileImage/${imageName}${imageData.name}`
+                );
+
+                pictureRef.delete();
               });
           }
         );
+    } else {
+      const image = "/default.png";
+      const result = await signUp(image, name, password, email);
+      setbannerData(result);
+      if (result.status === "success") {
+        router.push("/auth/login");
+        return;
+      }
     }
-    console.log(imageData);
-    const result = await signUp(
-      image,
-      name.current.value,
-      password.current.value,
-      email.current.value
-    );
-    setbannerData(result);
-    if (result.status === "success") {
-      router.push("/auth/login");
-    }
-    const pictureRef = storage.refFromURL(image);
-
-    pictureRef.delete();
   };
   const uploadImage = (e) => {
     if (
@@ -117,7 +127,7 @@ const SignIn = () => {
                 <FiStar />
               </span>
             </label>
-            <input type="name" id="name" required ref={name} />
+            <input type="name" id="name" required ref={namevalue} />
           </div>
 
           <div className={classes.control}>
@@ -127,7 +137,7 @@ const SignIn = () => {
                 <FiStar />
               </span>
             </label>
-            <input type="email" id="email" required ref={email} />
+            <input type="email" id="email" required ref={emailvalue} />
           </div>
           <div className={classes.control}>
             <label htmlFor="password">
@@ -136,7 +146,7 @@ const SignIn = () => {
                 <FiStar />
               </span>
             </label>
-            <input type="password" id="password" required ref={password} />
+            <input type="password" id="password" required ref={passwordvalue} />
           </div>
           <div
             className={classes.actions}

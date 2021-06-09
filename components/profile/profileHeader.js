@@ -2,53 +2,185 @@ import Image from "next/image";
 import classes from "./profileHeader.module.scss";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
-import { FiUserPlus, FiEdit } from "react-icons/fi";
+import { v4 as uuidv4 } from "uuid";
+import { storage } from "../../lib/dbConnect";
+import { FiUserPlus, FiEdit, FiCamera } from "react-icons/fi";
 import { useRef, useState } from "react";
+import { updateImage, updateProfile } from "../../lib/gettingandsetting";
+
 const ProfileHeader = ({ user, session }) => {
-  const header = useRef(user.authorHeader);
-  const image = useRef(user.authorImage);
   const name = useRef(user.authorName);
   const bio = useRef(user.authorBio);
-  // const [changedData, setChangedData] = useState({
-  //   Header: "",
-  //   Image: "",
-  //   Name: "",
-  //   Bio: "",
-  // });
   const [userDetails, setUserDetails] = useState({
     Header: user.authorHeader,
     Image: user.authorImage,
     Name: user.authorName,
     Bio: user.authorBio,
   });
-  // console.log(header);
+  const [UserImageLoading, setUSerImageLoading] = useState(0);
+  const [userHeaderLoading, setUserHeaderLoading] = useState(0);
   const [show, setShow] = useState(false);
-
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-  const SaveData = () => {
+  const [headerImage, setHeaderImage] = useState(
+    user.authorHeader || "/gradients.png"
+  );
+  const [userImage, setUserImage] = useState(
+    user.authorImage || "/default.png"
+  );
+  const [userImageData, setUserImageData] = useState(null);
+  const [headerData, setHeaderData] = useState(null);
+  const [updatedUserImage, setUpdatedUserImage] = useState(
+    user.authorImage || "/default.png"
+  );
+  const [updatedHandlerImage, setUpdatedHandlerImage] = useState(
+    user.authorHeader || "/gradients.png"
+  );
+  const handleClose = () => {
+    setUserImageData(null);
+    setHeaderData(null);
     setShow(false);
   };
+  const handleShow = () => {
+    setShow(true);
+  };
 
+  const SaveData = async () => {
+    setShow(false);
+    console.log(session.user.name);
+    const userId = session.user.name;
+    var metadata = {
+      contentType: "image/jpeg",
+    };
+    if (userImageData != null) {
+      if ((user.authorImage |= "/default.png")) {
+        const userImage = await storage.refFromURL(user.authorImage);
+        const userImagPath = userImage._delegate._location.path_;
+        await storage.ref(userImagPath).delete();
+      }
+      const imageName = uuidv4();
+      setUSerImageLoading(1);
+      await storage
+        .ref(`profileImage/${imageName}${userImageData.name}`)
+        .put(userImageData, metadata)
+        .on(
+          "state_changed",
+          (snapshot) => {
+            const progress = Math.round(
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+            );
+            if (progress > 0) {
+              setUSerImageLoading(progress);
+            }
+          },
+          (err) => {},
+          () => {
+            storage
+              .ref("profileImage")
+              .child(`${imageName}${userImageData.name}`)
+              .getDownloadURL()
+              .then(async (fireBaseUrl) => {
+                const image = fireBaseUrl;
+                setUpdatedUserImage(image);
+                await updateImage({
+                  imageLink: fireBaseUrl,
+                  operation: "Profile",
+                  userId: userId,
+                });
+                setUSerImageLoading(0);
+              });
+          }
+        );
+    }
+    if (headerData != null) {
+      if (user.authorHeader != "/gradients.png" && user.authorHeader) {
+        const userImage = await storage.refFromURL(user.authorHeader);
+        const userImagPath = userImage._delegate._location.path_;
+        await storage.ref(userImagPath).delete();
+      }
+      setUserHeaderLoading(1);
+      const imageName = uuidv4();
+      await storage
+        .ref(`profileImage/${imageName}${headerData.name}`)
+        .put(headerData, metadata)
+        .on(
+          "state_changed",
+          (snapshot) => {
+            const progress = Math.round(
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+            );
+            if (progress > 0) {
+              setUserHeaderLoading(progress);
+            }
+          },
+          (err) => {},
+          () => {
+            storage
+              .ref("profileImage")
+              .child(`${imageName}${headerData.name}`)
+              .getDownloadURL()
+              .then(async (fireBaseUrl) => {
+                const image = fireBaseUrl;
+                setUpdatedHandlerImage(image);
+                const result = await updateImage({
+                  imageLink: fireBaseUrl,
+                  operation: "Header",
+                  userId: userId,
+                });
+                setUserHeaderLoading(0);
+              });
+          }
+        );
+    }
+    if (
+      name.current.value != user.authorName ||
+      bio.current.value != user.authorBio
+    ) {
+      const result = await updateProfile({
+        Name: name.current.value,
+        Bio: bio.current.value,
+        userId: session.user.name,
+      });
+      console.log(result);
+    }
+  };
+  const headerHandler = (e) => {
+    const imageURL = URL.createObjectURL(e.target.files[0]);
+    setHeaderImage(imageURL);
+    setHeaderData(e.target.files[0]);
+  };
+  const userImageHandler = (e) => {
+    const imageURL = URL.createObjectURL(e.target.files[0]);
+    setUserImageData(e.target.files[0]);
+    setUserImage(imageURL);
+  };
   return (
     <div className={classes.header}>
       <div className={classes.headerImage}>
         <Image
-          src={userDetails.Header || "/gradients.png"}
+          src={updatedHandlerImage}
           height={300}
           width={900}
           layout="responsive"
           objectFit="cover"
         />
+        {userHeaderLoading != 0 && userHeaderLoading != 100 && (
+          <div
+            className={classes.loadingUploadedData}
+          >{` ${userHeaderLoading} % `}</div>
+        )}
       </div>
       <div className={classes.userDetails}>
         <div className={classes.userImage}>
           <Image
-            src={userDetails.Image || "/default.png"}
+            src={updatedUserImage}
             height={300}
             width={300}
             objectFit="fill"
           />
+          {UserImageLoading != 0 && UserImageLoading != 100 && (
+            <div
+              className={classes.loadingUploadedData}
+            >{` ${UserImageLoading} % `}</div>
+          )}
         </div>
         <div className={classes.detail}>
           <div className={classes.name}>
@@ -60,9 +192,7 @@ const ProfileHeader = ({ user, session }) => {
             </div>
           </div>
 
-          <div className={classes.bio}>
-            {userDetails.Bio || "This is sample bio"}
-          </div>
+          <div className={classes.bio}>{userDetails.Bio || ""}</div>
         </div>
         <div className={classes.btns}>
           {session.user.name == user._id ? (
@@ -87,33 +217,40 @@ const ProfileHeader = ({ user, session }) => {
           <Modal.Title>Edit your Profile</Modal.Title>
         </Modal.Header>
         <Modal.Body className={classes.modelBody}>
-          <label htmlFor="header">Your Header Image URL</label>
+          <label className={classes.headerImage} htmlFor="headerImage">
+            <img src={headerImage} height={200} width="100%" />
+            <div className={classes.camera}>
+              <FiCamera />
+            </div>
+          </label>
+
           <input
-            id="header"
-            type="text"
-            placeholder="Header Image URL"
-            value={userDetails.Header}
+            id="headerImage"
+            type="file"
+            accept="images/*"
+            style={{ display: "none" }}
+            onChange={headerHandler}
           />
-          <label htmlFor="image">Your Profile Image URL</label>
+          <label className={classes.userImage} htmlFor="userImage">
+            <img src={userImage} alt="userImage" height={150} width={150} />
+            <div className={classes.camera}>
+              <FiCamera />
+            </div>
+          </label>
           <input
-            id="image"
-            type="text"
-            placeholder="Your Image URL"
-            value={userDetails.Image}
+            id="userImage"
+            type="file"
+            accept="images/*"
+            style={{ display: "none" }}
+            onChange={userImageHandler}
           />
-          <div className={classes.helper}>
-            Not have url use this 👉🏻
-            <a href="https://drop-images-to-link.netlify.app/" target="_blank">
-              [image to url converter]
-            </a>{" "}
-            or unsplash Images are only allowed
-          </div>
           <label htmlFor="name">Your Name</label>
           <input
             id="name"
             type="text"
             placeholder="Your Name"
-            value={userDetails.Name}
+            ref={name}
+            defaultValue={userDetails.Name}
           />
           <label htmlFor="bio">Your Bio</label>
           <textarea
@@ -121,7 +258,8 @@ const ProfileHeader = ({ user, session }) => {
             rows="3"
             maxLength="50"
             placeholder="Your Bio"
-            value={userDetails.Bio}
+            ref={bio}
+            defaultValue={userDetails.Bio}
           />
         </Modal.Body>
         <Modal.Footer>
