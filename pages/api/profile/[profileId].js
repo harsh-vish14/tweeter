@@ -13,17 +13,19 @@ const userProfile = async (req, res) => {
       return;
     }
     const userTweets = [];
-    for (let i = 0; i < user.data().authorTweet.length; i++) {
-      const snapshot = await tweetDB.doc(user.data().authorTweet[i]).get();
-      const current_user = await userDB.doc(snapshot.data().authorId).get();
-      userTweets.push({
-        _id: user.data().authorTweet[i],
-        ...snapshot.data(),
-        userDetails: {
-          authorName: current_user.data().authorName,
-          authorImage: current_user.data().authorImage,
-        },
-      });
+    if (user.data().authorTweet) {
+      for (let i = 0; i < user.data().authorTweet.length; i++) {
+        const snapshot = await tweetDB.doc(user.data().authorTweet[i]).get();
+        const current_user = await userDB.doc(snapshot.data().authorId).get();
+        userTweets.push({
+          _id: user.data().authorTweet[i],
+          ...snapshot.data(),
+          userDetails: {
+            authorName: current_user.data().authorName,
+            authorImage: current_user.data().authorImage,
+          },
+        });
+      }
     }
     const finalProfileData = {
       _id: user.id,

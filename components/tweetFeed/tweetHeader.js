@@ -16,16 +16,17 @@ const getMonth = (number) => {
     "nov",
     "dec",
   ];
+  if (months == "") {
+    return "";
+  }
   return months[number];
 };
 const timeFormatter = (isoTime) => {
   const date = new Date(isoTime);
-  const localDate = date.to;
-  const localTime = date.toLocaleTimeString();
 
   return `${date.getDay()} ${getMonth(
     date.getMonth()
-  )} ${date.getFullYear()} at ${date.getUTCHours()}:${date.getUTCMinutes()}`;
+  )} ${date.getFullYear()} at ${date.getHours()}:${date.getMinutes()}`;
 };
 const TweetHeader = ({ tweetHeader }) => {
   const profileUrl = `/profile/${tweetHeader.authorId}`;

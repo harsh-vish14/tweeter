@@ -1,4 +1,4 @@
-import { connectDB, db } from "../../../lib/dbConnect";
+import { db } from "../../../lib/dbConnect";
 import firebase from "firebase";
 const handler = async (req, res) => {
   if (req.method === "POST") {
@@ -13,12 +13,11 @@ const handler = async (req, res) => {
       res.status(422).json({ err: "User not found" });
     }
     // console.log(Message, Image, userId, dateAndTime);
-    const date = new Date();
     const tweet = await db.collection("tweets").add({
       tweetMessage: Message,
       tweetImage: Image,
       authorId: user.id,
-      dateAndTime: date.toISOString(),
+      dateAndTime: dateAndTime,
       comments: [],
     });
     await db

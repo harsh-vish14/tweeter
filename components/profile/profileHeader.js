@@ -51,7 +51,7 @@ const ProfileHeader = ({ user, session }) => {
       contentType: "image/jpeg",
     };
     if (userImageData != null) {
-      if ((user.authorImage |= "/default.png")) {
+      if (user.authorImage != "/default.png") {
         const userImage = await storage.refFromURL(user.authorImage);
         const userImagPath = userImage._delegate._location.path_;
         await storage.ref(userImagPath).delete();
@@ -64,9 +64,10 @@ const ProfileHeader = ({ user, session }) => {
         .on(
           "state_changed",
           (snapshot) => {
-            const progress = Math.round(
-              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-            );
+            const progress =
+              Math.round(
+                (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+              ) - 1;
             if (progress > 0) {
               setUSerImageLoading(progress);
             }
@@ -80,12 +81,12 @@ const ProfileHeader = ({ user, session }) => {
               .then(async (fireBaseUrl) => {
                 const image = fireBaseUrl;
                 setUpdatedUserImage(image);
+                setUSerImageLoading(100);
                 await updateImage({
                   imageLink: fireBaseUrl,
                   operation: "Profile",
                   userId: userId,
                 });
-                setUSerImageLoading(0);
               });
           }
         );
@@ -104,9 +105,10 @@ const ProfileHeader = ({ user, session }) => {
         .on(
           "state_changed",
           (snapshot) => {
-            const progress = Math.round(
-              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-            );
+            const progress =
+              Math.round(
+                (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+              ) - 1;
             if (progress > 0) {
               setUserHeaderLoading(progress);
             }
@@ -120,12 +122,12 @@ const ProfileHeader = ({ user, session }) => {
               .then(async (fireBaseUrl) => {
                 const image = fireBaseUrl;
                 setUpdatedHandlerImage(image);
+                setUserHeaderLoading(100);
                 const result = await updateImage({
                   imageLink: fireBaseUrl,
                   operation: "Header",
                   userId: userId,
                 });
-                setUserHeaderLoading(0);
               });
           }
         );
@@ -159,7 +161,7 @@ const ProfileHeader = ({ user, session }) => {
           src={updatedHandlerImage}
           height={300}
           width={900}
-          layout="responsive"
+          // layout="responsive"
           objectFit="cover"
         />
         {userHeaderLoading != 0 && userHeaderLoading != 100 && (
@@ -174,7 +176,8 @@ const ProfileHeader = ({ user, session }) => {
             src={updatedUserImage}
             height={300}
             width={300}
-            objectFit="fill"
+            // layout="responsive"
+            objectFit="cover"
           />
           {UserImageLoading != 0 && UserImageLoading != 100 && (
             <div
@@ -214,7 +217,12 @@ const ProfileHeader = ({ user, session }) => {
       </div>
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Edit your Profile</Modal.Title>
+          <Modal.Title>
+            Edit your Profile
+            <div className={classes.helper}>
+              I will take some time to update your profile
+            </div>
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body className={classes.modelBody}>
           <label className={classes.headerImage} htmlFor="headerImage">

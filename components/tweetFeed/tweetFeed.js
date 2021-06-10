@@ -10,6 +10,7 @@ const TweetFeed = ({
   tweetId,
   likesdata,
   retweetdata,
+  isComment,
 }) => {
   const [like, setLike] = useState(likesdata);
   const [retweet, setRetweet] = useState(retweetdata);
@@ -36,11 +37,15 @@ const TweetFeed = ({
   return (
     <div className={classes.tweet}>
       <TweetHeader tweetHeader={tweetHeader} />
-      <Link href={tweetLink}>
-        <a>
-          <TweetBody tweetBody={tweetBody} />
-        </a>
-      </Link>
+      {isComment ? (
+        <TweetBody tweetBody={tweetBody} />
+      ) : (
+        <Link href={tweetLink}>
+          <a>
+            <TweetBody tweetBody={tweetBody} />
+          </a>
+        </Link>
+      )}
       <div
         className={classes.tweetDetails}
       >{`${like} Like ${retweet} Retweet`}</div>

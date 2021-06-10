@@ -1,24 +1,29 @@
 import { ObjectId } from "mongodb";
-import { connectDB } from "../../../lib/dbConnect";
+import { connectDB, db } from "../../../lib/dbConnect";
 
 const handler = async (req, res) => {
   if (req.method === "GET") {
     const { tweetId } = req.query;
-    const client = await connectDB();
-    const db = client.db();
-    const tweetdb = db.collection("tweets");
-
-    const tweet = await tweetdb.findOne({ _id: ObjectId(tweetId) });
-
-    const userDetails = await db
-      .collection("users")
-      .findOne(
-        { _id: ObjectId(tweet.authorId) },
-        { projection: { authorImage: 1, authorName: 1 } }
-      );
+    const tweetDB = await db.collection("tweets");
+    if (!(await tweetDB.doc(tweetId).get()).exists) {
+      res.status(404).json({ err: "Tweet not found" });
+      return;
+    }
+    const tweet = (await tweetDB.doc(tweetId).get()).data();
+    const user = (
+      await db.collection("users").doc(tweet.authorId).get()
+    ).data();
+    const CommentDetails = [];
+    for (let i = 0; i < tweet.comments.length; i++) {
+      console.log(tweet.comments[i]);
+    }
     const result = {
-      tweetDetails: tweet,
-      userDetails: userDetails,
+      ...tweet,
+      comments: CommentDetails,
+      authorDetails: {
+        authorName: user.authorName,
+        authorImage: user.authorImage,
+      },
     };
     res.status(200).json(result);
   }

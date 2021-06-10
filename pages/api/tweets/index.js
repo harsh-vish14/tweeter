@@ -2,7 +2,7 @@ import { db } from "../../../lib/dbConnect";
 
 const handler = async (req, res) => {
   if (req.method === "GET") {
-    const tweetsData = [];
+    var tweetsData = [];
     const tweets = [];
     await db
       .collection("tweets")
@@ -28,6 +28,13 @@ const handler = async (req, res) => {
           });
         });
     }
+    tweetsData = tweetsData.sort(function (a, b) {
+      return a.dateAndTime < b.dateAndTime
+        ? -1
+        : a.dateAndTime > b.dateAndTime
+        ? 1
+        : 0;
+    });
     tweetsData.reverse();
     res.status(200).json(tweetsData);
   }
