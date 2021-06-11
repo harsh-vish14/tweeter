@@ -6,6 +6,7 @@
   margin-top: 26px;
   border-radius: 15px;
   box-shadow: 0px 2px 4px 0px #0000000d;
+  // width: 80%;
   .user {
     display: flex;
     align-items: center;
@@ -29,5 +30,29 @@
     &:focus {
       box-shadow: inset 0px 0px 2px #00000047;
     }
+  }
+  .sendComment {
+    padding: 8px 19px;
+    background: #2f80ed;
+    width: fit-content;
+    border-radius: 8px;
+    color: white;
+    height: 40px;
+    cursor: pointer;
+  }
+}
+.tweetsId {
+  margin: auto;
+  width: 60%;
+}
+
+@media only screen and (max-width: 800px) {
+  .tweetsId {
+    width: 70%;
+  }
+}
+@media only screen and (max-width: 700px) {
+  .tweetsId {
+    width: 90%;
   }
 }

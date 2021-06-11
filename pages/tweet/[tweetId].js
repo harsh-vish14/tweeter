@@ -1,18 +1,21 @@
-import { getSession } from "next-auth/client";
+import { getSession, session } from "next-auth/client";
 import { useEffect, useState } from "react";
 import CommentInput from "../../components/comment-input/input";
 import Loading from "../../components/loading/loading";
 import TweetFeed from "../../components/tweetFeed/tweetFeed";
-import { getTweetById } from "../../lib/gettingandsetting";
+import { getTweetById, setCommentData } from "../../lib/gettingandsetting";
+import classes from "../../components/comment-input/comment.module.scss";
+import Comments from "../../components/comment/comment";
 const CommentDetails = (props) => {
-  // console.log(router.query.commentId);
-
   const [tweet, setTweet] = useState(null);
+  const [tweetComments, setTweetComments] = useState([]);
+  console.log(props.session);
   useEffect(async () => {
     const result = await getTweetById(props.id);
     if (result.status != "error") {
       setTweet(result.data);
       console.log(result);
+      setTweetComments(result.data.comments);
     }
   }, []);
   if (!tweet) {
@@ -28,8 +31,26 @@ const CommentDetails = (props) => {
     tweetMessage: tweet.tweetMessage,
     tweetImage: tweet.tweetImage,
   };
+  const submitCommentHandler = async (commentData) => {
+    const date = new Date();
+    setTweetComments((preve) => {
+      return [
+        {
+          userDetails: {
+            authorName: props.session.user.username,
+            authorImage: props.session.user.image.userImage,
+          },
+          authorId: props.session.user.name,
+          message: commentData.message,
+          dateAndTime: date.toISOString(),
+        },
+        ...preve,
+      ];
+    });
+    const result = await setCommentData(commentData);
+  };
   return (
-    <div style={{ width: "90%", margin: "auto" }}>
+    <div className={classes.tweetsId}>
       <TweetFeed
         tweetBody={tweetBody}
         tweetHeader={tweetHeader}
@@ -38,10 +59,15 @@ const CommentDetails = (props) => {
         retweetdata={tweet.retweet || 0}
         isComment="true"
       />
-      <CommentInput session={props.session} />
-      {tweet.comments.length > 0 ? (
-        tweet.comments.map((comment) => {
-          console.log(comment);
+      <CommentInput
+        session={props.session}
+        tweetId={props.id}
+        submitCommentHandler={submitCommentHandler}
+      />
+
+      {tweetComments.length != 0 ? (
+        tweetComments.map((comment) => {
+          return <Comments commentData={comment} />;
         })
       ) : (
         <div style={{ height: "200px" }}></div>

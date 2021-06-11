@@ -33,8 +33,8 @@ const userProfile = async (req, res) => {
       authorName: user.data().authorName,
       authorImage: user.data().authorImage,
       authorHeader: user.data().authorHeader,
-      followers: user.data().followers.length,
-      following: user.data().following.length,
+      followers: user.data().followers,
+      following: user.data().following,
       tweets: userTweets,
     };
     console.log(finalProfileData);

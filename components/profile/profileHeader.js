@@ -4,11 +4,18 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import { v4 as uuidv4 } from "uuid";
 import { storage } from "../../lib/dbConnect";
-import { FiUserPlus, FiEdit, FiCamera } from "react-icons/fi";
+import { FiUserPlus, FiEdit, FiCamera, FiUserCheck } from "react-icons/fi";
 import { useRef, useState } from "react";
-import { updateImage, updateProfile } from "../../lib/gettingandsetting";
+import {
+  AddFollower,
+  updateImage,
+  updateProfile,
+} from "../../lib/gettingandsetting";
 
 const ProfileHeader = ({ user, session }) => {
+  const [isFollowed, setIsFollowed] = useState(
+    user.followers.includes(session.user.name)
+  );
   const name = useRef(user.authorName);
   const bio = useRef(user.authorBio);
   const [userDetails, setUserDetails] = useState({
@@ -154,6 +161,13 @@ const ProfileHeader = ({ user, session }) => {
     setUserImageData(e.target.files[0]);
     setUserImage(imageURL);
   };
+  const followingHandler = async () => {
+    const currentUserId = session.user.name;
+    const followersUserId = user._id;
+    const result = await AddFollower({ currentUserId, followersUserId });
+    setIsFollowed(true);
+  };
+
   return (
     <div className={classes.header}>
       <div className={classes.headerImage}>
@@ -189,8 +203,8 @@ const ProfileHeader = ({ user, session }) => {
           <div className={classes.name}>
             {userDetails.Name}
             <div className={classes.followers}>
-              {`Followers: ${user.followers || 0} Following: ${
-                user.following || 0
+              {`Followers: ${user.followers.length || 0} Following: ${
+                user.following.length || 0
               }`}
             </div>
           </div>
@@ -205,8 +219,15 @@ const ProfileHeader = ({ user, session }) => {
               </span>{" "}
               EDIT
             </div>
-          ) : (
+          ) : isFollowed ? (
             <div>
+              <span style={{ marginRight: "10px" }}>
+                <FiUserCheck />
+              </span>
+              FOLLOWED
+            </div>
+          ) : (
+            <div onClick={followingHandler}>
               <span style={{ marginRight: "10px" }}>
                 <FiUserPlus />
               </span>
@@ -231,7 +252,6 @@ const ProfileHeader = ({ user, session }) => {
               <FiCamera />
             </div>
           </label>
-
           <input
             id="headerImage"
             type="file"
@@ -264,7 +284,7 @@ const ProfileHeader = ({ user, session }) => {
           <textarea
             id="bio"
             rows="3"
-            maxLength="50"
+            maxLength="160"
             placeholder="Your Bio"
             ref={bio}
             defaultValue={userDetails.Bio}

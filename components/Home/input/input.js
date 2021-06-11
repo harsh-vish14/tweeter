@@ -38,7 +38,7 @@ const InputBox = ({ submitTweetHandler }) => {
       };
       setUploadProgress(1);
       await storage
-        .ref(`profileImage/${imageName}${inputImage.name}`)
+        .ref(`tweetImage/${imageName}${inputImage.name}`)
         .put(inputImage, metadata)
         .on(
           "state_changed",
@@ -55,7 +55,7 @@ const InputBox = ({ submitTweetHandler }) => {
           (err) => {},
           () => {
             storage
-              .ref("profileImage")
+              .ref("tweetImage")
               .child(`${imageName}${inputImage.name}`)
               .getDownloadURL()
               .then(async (fireBaseUrl) => {
@@ -108,7 +108,7 @@ const InputBox = ({ submitTweetHandler }) => {
           <div style={{ width: "90%" }}>
             <textarea
               rows="3"
-              maxLength="100"
+              maxLength="277"
               placeholder="What’s happening?"
               ref={tweetMessage}
             />

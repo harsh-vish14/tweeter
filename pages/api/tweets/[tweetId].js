@@ -13,10 +13,29 @@ const handler = async (req, res) => {
     const user = (
       await db.collection("users").doc(tweet.authorId).get()
     ).data();
-    const CommentDetails = [];
+    let CommentDetails = [];
     for (let i = 0; i < tweet.comments.length; i++) {
-      console.log(tweet.comments[i]);
+      const user = (
+        await db.collection("users").doc(tweet.comments[i].userId).get()
+      ).data();
+      CommentDetails.push({
+        userDetails: {
+          authorName: user.authorName,
+          authorImage: user.authorImage,
+        },
+        authorId: tweet.comments[i].userId,
+        message: tweet.comments[i].message,
+        dateAndTime: tweet.comments[i].dateAndTime,
+      });
     }
+    CommentDetails = CommentDetails.sort(function (a, b) {
+      return a.dateAndTime < b.dateAndTime
+        ? -1
+        : a.dateAndTime > b.dateAndTime
+        ? 1
+        : 0;
+    });
+    CommentDetails.reverse();
     const result = {
       ...tweet,
       comments: CommentDetails,

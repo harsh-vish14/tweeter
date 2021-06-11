@@ -11,6 +11,7 @@ const TweetFeed = ({
   likesdata,
   retweetdata,
   isComment,
+  isCommentBox = false,
 }) => {
   const [like, setLike] = useState(likesdata);
   const [retweet, setRetweet] = useState(retweetdata);
@@ -46,15 +47,19 @@ const TweetFeed = ({
           </a>
         </Link>
       )}
-      <div
-        className={classes.tweetDetails}
-      >{`${like} Like ${retweet} Retweet`}</div>
-      <TweetFooter
-        url={tweetLink}
-        tweetId={tweetId}
-        likeAdd={likeAdd}
-        retweetAdd={retweetAdd}
-      />
+      {!isCommentBox && (
+        <>
+          <div
+            className={classes.tweetDetails}
+          >{`${like} Like ${retweet} Retweet`}</div>
+          <TweetFooter
+            url={tweetLink}
+            tweetId={tweetId}
+            likeAdd={likeAdd}
+            retweetAdd={retweetAdd}
+          />
+        </>
+      )}
     </div>
   );
 };
