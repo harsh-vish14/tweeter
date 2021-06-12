@@ -15,7 +15,7 @@ const sendTweetOperation = async (userId, tweetId, operation) => {
     body: JSON.stringify(body),
     headers: {
       "Content-Type": "application/json",
-      Authorization: `${process.env.AUTH_APIKEY}`,
+      Authorization: `${process.env.AUTHKEY}`,
     },
   });
   const data = await res.json();

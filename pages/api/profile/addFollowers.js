@@ -3,7 +3,7 @@ import firebase from "firebase";
 const handler = async (req, res) => {
   if (
     req.method === "POST" &&
-    req.headers.authorization === process.env.SERVER_APIKEY
+    req.headers.authorization === process.env.SERVER_AUTHKEY
   ) {
     const { currentUserId, followersUserId } = req.body;
     const userDB = await db.collection("users");

@@ -3,7 +3,7 @@ import { db } from "../../../../lib/dbConnect";
 const handler = async (req, res) => {
   if (
     req.method === "POST" &&
-    req.headers.authorization == process.env.SERVER_APIKEY
+    req.headers.authorization == process.env.SERVER_AUTHKEY
   ) {
     const id = req.body.id;
     const userDB = await db.collection("users");
@@ -30,7 +30,6 @@ const handler = async (req, res) => {
     }
     res.status(200).json(bookmarks);
   }
-  res.status(404).json({ errors: process.env.SERVER_APIKEY });
 };
 
 export default handler;
