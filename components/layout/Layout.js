@@ -9,6 +9,7 @@ const Layout = (props) => {
     <Fragment>
       <Head>
         <title>Tweeter</title>
+        <link rel="icon" type="image/png" href="/logos/tweeter-small.svg" />
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1.0"
