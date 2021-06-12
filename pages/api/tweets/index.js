@@ -13,7 +13,6 @@ const handler = async (req, res) => {
         });
       });
     for (var i = 0; i < tweets.length; i++) {
-      // console.log(tweets[i]);
       await db
         .collection("users")
         .doc(tweets[i].authorId)

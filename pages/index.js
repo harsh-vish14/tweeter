@@ -38,7 +38,6 @@ export default function Home() {
       const tweetdata = await fetchAllData();
       tweetsContext.setTweetsData(tweetdata);
     }
-    console.log(result);
     return result;
   };
 

@@ -15,24 +15,11 @@ const TweetFeed = ({
 }) => {
   const [like, setLike] = useState(likesdata);
   const [retweet, setRetweet] = useState(retweetdata);
-
-  // const tweetHeader = {
-  //   authorImage: tweet.authorDetails[0].authorImage,
-  //   authorName: tweet.authorDetails[0].authorName,
-  //   dateAndTime: tweet.dateAndTime,
-  //   authorId: tweet.authorDetails[0]._id,
-  // };
-  // const tweetBody = {
-  //   tweetMessage: tweet.tweetMessage,
-  //   tweetImage: tweet.tweetImage,
-  // };
   const tweetLink = `/tweet/${tweetId}`;
   const likeAdd = () => {
-    console.log("like-clicked");
     setLike((preve) => preve + 1);
   };
   const retweetAdd = () => {
-    console.log("retweet-clicked");
     setRetweet((preve) => preve + 1);
   };
   return (

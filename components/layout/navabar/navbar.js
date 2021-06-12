@@ -1,9 +1,7 @@
 import NavLink from "./NavLink";
 import Image from "next/image";
-import { useSession } from "next-auth/client";
 import classes from "./navbar.module.scss";
 import Dropdown from "../../dropdown/dropdown";
-// import { useState } from "react";
 import Link from "next/link";
 
 const Navbar = ({ session }) => {

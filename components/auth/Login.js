@@ -19,7 +19,6 @@ const Login = () => {
     e.preventDefault();
     const currentEmail = email.current.value;
     const currentPassword = password.current.value;
-    console.log(typeof currentPassword);
     setShowIndicator(true);
     setbannerData({
       status: "",

@@ -12,7 +12,7 @@ const handler = async (req, res) => {
     if (!user.exists) {
       res.status(422).json({ err: "User not found" });
     }
-    // console.log(Message, Image, userId, dateAndTime);
+
     const tweet = await db.collection("tweets").add({
       tweetMessage: Message,
       tweetImage: Image,

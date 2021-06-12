@@ -1,4 +1,9 @@
-import { useState, useEffect, createContext } from "react";
+/* 
+This is context api for save tweets and bookmarks
+this is increases this user experience
+*/
+
+import { useState, createContext } from "react";
 export const tweetsDetails = createContext({
   currentTweets: [],
   bookmarks: [],

@@ -1,11 +1,9 @@
 import { hashPassword } from "../../../lib/auth";
 import { db } from "../../../lib/dbConnect";
-// import { connectDB } from "../../../lib/dbConnect";
 
 const handler = async (req, res) => {
   if (req.method === "POST") {
     const { name, email, password, image } = req.body;
-    console.log(req.body);
 
     if (!email || !password || !email.includes("@") || !name) {
       res.status(422).json({ err: "Invalid Response" });

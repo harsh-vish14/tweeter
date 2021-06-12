@@ -1,5 +1,4 @@
-import { ObjectId } from "mongodb";
-import { connectDB, db } from "../../../lib/dbConnect";
+import { db } from "../../../lib/dbConnect";
 
 const handler = async (req, res) => {
   if (req.method === "GET") {

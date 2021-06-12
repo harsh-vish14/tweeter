@@ -10,7 +10,6 @@ const Dropdown = () => {
   const [session, loading] = useSession();
   const dropdown = useRef(null);
   const logoutHandler = () => {
-    console.log("logout clicked");
     signOut();
   };
   useEffect(() => {

@@ -66,7 +66,6 @@ const SignIn = () => {
               (snapshot.bytesTransferred / snapshot.totalBytes) * 100
             );
             setProgress(progress);
-            // console.log(progress);
           },
           (err) => {},
           () => {

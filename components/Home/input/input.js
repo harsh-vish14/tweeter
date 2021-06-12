@@ -1,6 +1,4 @@
 import { BsCardImage } from "react-icons/bs";
-import Modal from "react-bootstrap/Modal";
-import Button from "react-bootstrap/Button";
 import classes from "./input.module.scss";
 import { v4 as uuidv4 } from "uuid";
 import ImageLabel from "../../ImageLable";
@@ -9,28 +7,12 @@ import { useSession } from "next-auth/client";
 import Link from "next/link";
 import { storage } from "../../../lib/dbConnect";
 const InputBox = ({ submitTweetHandler }) => {
-  // const [show, setShow] = useState(false);
   const [session, loading] = useSession();
-  // const handleClose = () => setShow(false);
-  // const handleShow = () => setShow(true);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [inputImage, setInputImage] = useState(null);
-  const [imageurl, setImageUrl] = useState("");
   const tweetMessage = useRef();
   const tweetHandler = async () => {
     const currentTweetMessage = tweetMessage.current.value;
-    // const currentTweetImage = imageurl;
-    // if (!currentTweetMessage) {
-    //   if (!currentTweetImage.includes("https://images.unsplash.com")) {
-    //     if (
-    //       !currentTweetImage.includes("https://firebasestorage.googleapis.com")
-    //     ) {
-    //       // handleShow();
-    //       return;
-    //     }
-    //     return;
-    //   }
-    // }
     if (inputImage) {
       const imageName = uuidv4();
       var metadata = {
@@ -46,9 +28,7 @@ const InputBox = ({ submitTweetHandler }) => {
             const progress = Math.round(
               (snapshot.bytesTransferred / snapshot.totalBytes) * 100
             );
-            console.log(progress);
             if (progress > 0) {
-              //  / setUserHeaderLoading(progress);
               setUploadProgress(progress);
             }
           },
@@ -59,14 +39,6 @@ const InputBox = ({ submitTweetHandler }) => {
               .child(`${imageName}${inputImage.name}`)
               .getDownloadURL()
               .then(async (fireBaseUrl) => {
-                // const image = fireBaseUrl;
-                // setUpdatedHandlerImage(image);
-                // setUserHeaderLoading(100);
-                // const result = await updateImage({
-                //   imageLink: fireBaseUrl,
-                //   operation: "Header",
-                //   userId: userId,
-                // });
                 setInputImage(null);
                 const result = await submitTweetHandler({
                   Message: currentTweetMessage,
@@ -82,8 +54,6 @@ const InputBox = ({ submitTweetHandler }) => {
         Image: "",
       });
     }
-
-    // setImageUrl("");
     tweetMessage.current.value = "";
   };
   const changeImageHandler = (e) => {
@@ -119,9 +89,6 @@ const InputBox = ({ submitTweetHandler }) => {
                   height="100px"
                   width="100px"
                   style={{ borderRadius: "10px", cursor: "pointer" }}
-                  onClick={() => {
-                    setInputImage(null);
-                  }}
                 />
                 {uploadProgress != 0 && (
                   <span>{` Uploaded ${uploadProgress} %`}</span>
@@ -146,32 +113,6 @@ const InputBox = ({ submitTweetHandler }) => {
             </div>
           </div>
         </div>
-        {/* <Modal show={show} onHide={handleClose}>
-          <Modal.Header closeButton>
-            <Modal.Title>Add Image</Modal.Title>
-          </Modal.Header>
-          <input
-            type="text"
-            placeholder="Image url"
-            className={classes.modelInput}
-            onChange={(e) => {
-              setImageUrl(e.target.value);
-            }}
-            value={imageurl}
-          />
-          <div className={classes.helper}>
-            Not have url use this 👉🏻
-            <a href="https://drop-images-to-link.netlify.app/" target="_blank">
-              [image to url converter]
-            </a>{" "}
-            or unsplash Images are only allowed
-          </div>
-          <Modal.Footer>
-            <Button variant="primary" onClick={handleClose}>
-              Add image
-            </Button>
-          </Modal.Footer>
-        </Modal> */}
       </div>
     )
   );

@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 import { storage } from "../../lib/dbConnect";
 import { FiUserPlus, FiEdit, FiCamera, FiUserCheck } from "react-icons/fi";
 import { useRef, useState } from "react";
+import Head from "next/head";
 import {
   AddFollower,
   updateImage,
@@ -52,7 +53,6 @@ const ProfileHeader = ({ user, session }) => {
 
   const SaveData = async () => {
     setShow(false);
-    console.log(session.user.name);
     const userId = session.user.name;
     var metadata = {
       contentType: "image/jpeg",
@@ -148,7 +148,6 @@ const ProfileHeader = ({ user, session }) => {
         Bio: bio.current.value,
         userId: session.user.name,
       });
-      console.log(result);
     }
   };
   const headerHandler = (e) => {
@@ -169,137 +168,141 @@ const ProfileHeader = ({ user, session }) => {
   };
 
   return (
-    <div className={classes.header}>
-      <div className={classes.headerImage}>
-        <Image
-          src={updatedHandlerImage}
-          height={300}
-          width={900}
-          // layout="responsive"
-          objectFit="cover"
-        />
-        {userHeaderLoading != 0 && userHeaderLoading != 100 && (
-          <div
-            className={classes.loadingUploadedData}
-          >{` ${userHeaderLoading} % `}</div>
-        )}
-      </div>
-      <div className={classes.userDetails}>
-        <div className={classes.userImage}>
+    <>
+      <Head>
+        <title>{userDetails.Name}</title>
+        <meta name="description" content={userDetails.Bio || ""}></meta>
+      </Head>
+      <div className={classes.header}>
+        <div className={classes.headerImage}>
           <Image
-            src={updatedUserImage}
+            src={updatedHandlerImage}
             height={300}
-            width={300}
-            // layout="responsive"
+            width={900}
             objectFit="cover"
           />
-          {UserImageLoading != 0 && UserImageLoading != 100 && (
+          {userHeaderLoading != 0 && userHeaderLoading != 100 && (
             <div
               className={classes.loadingUploadedData}
-            >{` ${UserImageLoading} % `}</div>
+            >{` ${userHeaderLoading} % `}</div>
           )}
         </div>
-        <div className={classes.detail}>
-          <div className={classes.name}>
-            {userDetails.Name}
-            <div className={classes.followers}>
-              {`Followers: ${user.followers.length || 0} Following: ${
-                user.following.length || 0
-              }`}
-            </div>
+        <div className={classes.userDetails}>
+          <div className={classes.userImage}>
+            <Image
+              src={updatedUserImage}
+              height={300}
+              width={300}
+              objectFit="cover"
+            />
+            {UserImageLoading != 0 && UserImageLoading != 100 && (
+              <div
+                className={classes.loadingUploadedData}
+              >{` ${UserImageLoading} % `}</div>
+            )}
           </div>
+          <div className={classes.detail}>
+            <div className={classes.name}>
+              {userDetails.Name}
+              <div className={classes.followers}>
+                {`Followers: ${user.followers.length || 0} Following: ${
+                  user.following.length || 0
+                }`}
+              </div>
+            </div>
 
-          <div className={classes.bio}>{userDetails.Bio || ""}</div>
+            <div className={classes.bio}>{userDetails.Bio || ""}</div>
+          </div>
+          <div className={classes.btns}>
+            {session.user.name == user._id ? (
+              <div onClick={handleShow}>
+                <span style={{ marginRight: "10px" }}>
+                  <FiEdit />
+                </span>{" "}
+                EDIT
+              </div>
+            ) : isFollowed ? (
+              <div>
+                <span style={{ marginRight: "10px" }}>
+                  <FiUserCheck />
+                </span>
+                FOLLOWED
+              </div>
+            ) : (
+              <div onClick={followingHandler}>
+                <span style={{ marginRight: "10px" }}>
+                  <FiUserPlus />
+                </span>
+                FOLLOW
+              </div>
+            )}
+          </div>
         </div>
-        <div className={classes.btns}>
-          {session.user.name == user._id ? (
-            <div onClick={handleShow}>
-              <span style={{ marginRight: "10px" }}>
-                <FiEdit />
-              </span>{" "}
-              EDIT
-            </div>
-          ) : isFollowed ? (
-            <div>
-              <span style={{ marginRight: "10px" }}>
-                <FiUserCheck />
-              </span>
-              FOLLOWED
-            </div>
-          ) : (
-            <div onClick={followingHandler}>
-              <span style={{ marginRight: "10px" }}>
-                <FiUserPlus />
-              </span>
-              FOLLOW
-            </div>
-          )}
-        </div>
+        <Modal show={show} onHide={handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>
+              Edit your Profile
+              <div className={classes.helper}>
+                I will take some time to update your profile
+              </div>
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body className={classes.modelBody}>
+            <label className={classes.headerImage} htmlFor="headerImage">
+              <img src={headerImage} height={200} width="100%" />
+              <div className={classes.camera}>
+                <FiCamera />
+              </div>
+            </label>
+            <input
+              id="headerImage"
+              type="file"
+              accept="images/*"
+              style={{ display: "none" }}
+              onChange={headerHandler}
+            />
+            <label className={classes.userImage} htmlFor="userImage">
+              <img src={userImage} alt="userImage" height={150} width={150} />
+              <div className={classes.camera}>
+                <FiCamera />
+              </div>
+            </label>
+            <input
+              id="userImage"
+              type="file"
+              accept="images/*"
+              style={{ display: "none" }}
+              onChange={userImageHandler}
+            />
+            <label htmlFor="name">Your Name</label>
+            <input
+              id="name"
+              type="text"
+              placeholder="Your Name"
+              ref={name}
+              defaultValue={userDetails.Name}
+            />
+            <label htmlFor="bio">Your Bio</label>
+            <textarea
+              id="bio"
+              rows="3"
+              maxLength="160"
+              placeholder="Your Bio"
+              ref={bio}
+              defaultValue={userDetails.Bio}
+            />
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose}>
+              Close
+            </Button>
+            <Button variant="primary" onClick={SaveData}>
+              Save Changes
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </div>
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>
-            Edit your Profile
-            <div className={classes.helper}>
-              I will take some time to update your profile
-            </div>
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body className={classes.modelBody}>
-          <label className={classes.headerImage} htmlFor="headerImage">
-            <img src={headerImage} height={200} width="100%" />
-            <div className={classes.camera}>
-              <FiCamera />
-            </div>
-          </label>
-          <input
-            id="headerImage"
-            type="file"
-            accept="images/*"
-            style={{ display: "none" }}
-            onChange={headerHandler}
-          />
-          <label className={classes.userImage} htmlFor="userImage">
-            <img src={userImage} alt="userImage" height={150} width={150} />
-            <div className={classes.camera}>
-              <FiCamera />
-            </div>
-          </label>
-          <input
-            id="userImage"
-            type="file"
-            accept="images/*"
-            style={{ display: "none" }}
-            onChange={userImageHandler}
-          />
-          <label htmlFor="name">Your Name</label>
-          <input
-            id="name"
-            type="text"
-            placeholder="Your Name"
-            ref={name}
-            defaultValue={userDetails.Name}
-          />
-          <label htmlFor="bio">Your Bio</label>
-          <textarea
-            id="bio"
-            rows="3"
-            maxLength="160"
-            placeholder="Your Bio"
-            ref={bio}
-            defaultValue={userDetails.Bio}
-          />
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={SaveData}>
-            Save Changes
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </div>
+    </>
   );
 };
 

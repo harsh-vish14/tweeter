@@ -19,13 +19,11 @@ const sendTweetOperation = async (userId, tweetId, operation) => {
     },
   });
   const data = await res.json();
-  console.log(data);
 };
 const TweetFooter = ({ url, tweetId, retweetAdd, likeAdd }) => {
   // const [message,setMessage]= useState
   const [session, loading] = useSession();
   const retweetClicked = () => {
-    console.log(session.user.name);
     sendTweetOperation(session.user.name, tweetId, "retweet");
     retweetAdd();
   };

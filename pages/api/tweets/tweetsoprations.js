@@ -1,5 +1,5 @@
 import { connectDB, db } from "../../../lib/dbConnect";
-import { ObjectId } from "mongodb";
+
 import firebase from "firebase";
 const handler = async (req, res) => {
   if (
@@ -7,7 +7,7 @@ const handler = async (req, res) => {
     req.headers.authorization === process.env.APIKEY
   ) {
     const { userId, tweetId, operation } = req.body;
-    console.log(userId, tweetId, operation);
+
     if (
       !operation ||
       !operation == "retweet" ||

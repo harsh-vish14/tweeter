@@ -1,7 +1,6 @@
 import TweetFeed from "../tweetFeed/tweetFeed";
 
 const Comments = ({ commentData }) => {
-  //   console.log(commentData.userDetails);
   const tweetHeader = {
     authorImage: commentData.userDetails.authorImage,
     authorName: commentData.userDetails.authorName,
