@@ -3,7 +3,7 @@ import { db } from "../../../../lib/dbConnect";
 const handler = async (req, res) => {
   if (
     req.method === "POST" &&
-    req.headers.authorization === process.env.AUTH_APIKEY
+    req.headers.authorization === process.env.SERVER_APIKEY
   ) {
     const id = req.body.id;
     const userDB = await db.collection("users");
